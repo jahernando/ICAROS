@@ -13,7 +13,7 @@ def remove_nan(vals : np.array) -> np.array:
 
 
 def select_in_range(vals : np.array, range : tuple = None) -> np.array(bool):
-    if (range is None): return np.ones(len(vals))
+    if (range is None): return vals >= np.min(vals)
     sel = (vals >= range[0]) & (vals < range[1])
     return sel
 
