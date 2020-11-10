@@ -9,11 +9,13 @@ import matplotlib.pyplot as plt
     functions extending plt
 """
 
-def canvas(ns : int, ny : int = 2, height : float = 6., width : float = 4.) -> callable:
+
+def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 5.) -> callable:
     """ create a canvas with ns subplots and ny-columns,
     return a function to move to next subplot in the canvas
     """
-    nx  = int(ns/ny + ns%ny)
+    nx  = int(ns / ny + ns % ny)
+    plt.figure(figsize = (width * ny, height * nx))
     def subplot(iplot):
         assert iplot <= nx * ny
         plt.subplot(nx, ny, iplot)
