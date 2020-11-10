@@ -91,7 +91,8 @@ def str_parameters(pars, covpars, parnames = None, formate = '6.2f'):
 def fgaus(x, a, b, c):
     """ return a gausian function
     """
-    return a * np.exp(- (x-b)**2 / (2* c**2) ) / (np.sqrt(2 * np.pi) * c)
+    if (c <= 0.): return 0.
+    return a * np.exp(- (x-b)**2 / (2* c**2) )
 
 
 def ggaus(x):
@@ -125,7 +126,7 @@ nline = ['a', 'b']
 def fexp(x, a, b):
     """ an exponential function a * exp(-b * x)
     """
-    return b * a * np.exp( - b * x) 
+    return a * np.exp( - b * x)
 
 
 def gexp(x):
