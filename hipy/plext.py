@@ -13,12 +13,10 @@ def canvas(ns : int, ny : int = 2, height : float = 6., width : float = 4.) -> c
     """ create a canvas with ns subplots and ny-columns,
     return a function to move to next subplot in the canvas
     """
-    icd = 0
-    nx = int(ns/ny + ns%ny)
-    def subplot(i : int = 1):
-        icd += i
-        assert icd <= nx * ny
-        plt.subplot(nx, ny, icd)
+    nx  = int(ns/ny + ns%ny)
+    def subplot(iplot):
+        assert iplot <= nx * ny
+        plt.subplot(nx, ny, iplot)
     return subplot
 
 
