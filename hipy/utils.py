@@ -12,7 +12,7 @@ def remove_nan(vals : np.array) -> np.array:
      return vals[~np.isnan(vals)]
 
 
-def select_in_range(vals : np.array, range : tuple = None) -> np.array(bool):
+def in_range(vals : np.array, range : tuple = None) -> np.array(bool):
     if (range is None): return vals >= np.min(vals)
     sel = (vals >= range[0]) & (vals < range[1])
     return sel
@@ -20,7 +20,7 @@ def select_in_range(vals : np.array, range : tuple = None) -> np.array(bool):
 
 def stats(vals : np.array, range : tuple = None):
     vals = remove_nan(vals)
-    sel  = select_in_range(vals, range)
+    sel  = in_range(vals, range)
     vv = vals[sel]
     mean, std, evts, oevts = np.mean(vv), np.std(vv), len(vv), len(vals) - len(vv)
     return evts, mean, std, oevts

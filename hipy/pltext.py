@@ -4,6 +4,7 @@ import hipy.utils as ut
 from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
+plt.style.context('seaborn-colorblind')
 
 """
     functions extending plt
