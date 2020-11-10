@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 """
 
 
-def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 5.) -> callable:
+def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> callable:
     """ create a canvas with ns subplots and ny-columns,
     return a function to move to next subplot in the canvas
     """
@@ -22,7 +22,7 @@ def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 5.) -> c
     return subplot
 
 
-def hist(x : np.array, stats : bool = True, xylabels : tuple = None, **kargs):
+def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None, **kargs):
     """ decorate hist to label the statistic and to write the x-y labels
     """
 
@@ -30,8 +30,8 @@ def hist(x : np.array, stats : bool = True, xylabels : tuple = None, **kargs):
         kargs['histtype'] = 'step'
 
     if (stats):
-        range   = kargs['range']   if 'range'   in kargs.key else None
-        formate = kargs['formate'] if 'formate' in kargs.key else '6.2f'
+        range   = kargs['range']   if 'range'   in kargs.keys() else None
+        formate = kargs['formate'] if 'formate' in kargs.keys() else '6.2f'
         ss = ut.str_stats(x, range = range, formate = formate)
 
         #range = kargs['range'] if 'range' in kargs.keys() else (np.min(x), np.max(x))
@@ -43,9 +43,9 @@ def hist(x : np.array, stats : bool = True, xylabels : tuple = None, **kargs):
         #sstd      =  r'std  = {:7.2f}'.format(std)
         #sstat     =  f'{sentries}\n{smean}\n{sstd}'
         if ('label' in kargs.keys()):
-            kargs['label'] += '\n' + sstat
+            kargs['label'] += '\n' + ss
         else:
-            kargs['label'] = sstat
+            kargs['label'] = ss
 
     c = plt.hist(x, bins, **kargs)
 
