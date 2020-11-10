@@ -51,7 +51,8 @@ def hfit(x, fun, guess = None, bins = 100, range = None):
     return fpar, np.sqrt(np.diag(fcov))
 
 
-def plt_hfit(x, fun, guess = None, bins = 100, range = None, parnames = None):
+def plt_hfit(x, fun, guess = None, bins = 100, range = None,
+            parnames = None, formate = '6.2f'):
     """ fit and plot a histogram to a function with guess parameters
     inputs:
     x    : np.array, values to build the histogram
@@ -68,7 +69,7 @@ def plt_hfit(x, fun, guess = None, bins = 100, range = None, parnames = None):
     pars, parscov = hfit(x, fun, guess, bins, range)
     xcs = 0.5* (xs[1:] + xs[:-1])
     parnames = parnames if parnames is not None else fnames
-    ss  = str_parameters(pars, parscov, parnames)
+    ss  = str_parameters(pars, parscov, parnames, formate = formate)
     plt.plot(xcs, fun(xcs, *pars), label = ss)
     plt.legend()
     return pars, parscov
@@ -90,7 +91,7 @@ def str_parameters(pars, covpars, parnames = None, formate = '6.2f'):
 def fgaus(x, a, b, c):
     """ return a gausian function
     """
-    return a * np.exp(- (x-b)**2 / (2* c**2) )
+    return a * np.exp(- (x-b)**2 / (2* c**2) ) / (np.sqrt(2 * np.pi) * c)
 
 
 def ggaus(x):
@@ -124,7 +125,7 @@ nline = ['a', 'b']
 def fexp(x, a, b):
     """ an exponential function a * exp(-b * x)
     """
-    return a * np.exp( - b * x)
+    return b * a * np.exp( - b * x) 
 
 
 def gexp(x):
