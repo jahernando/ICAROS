@@ -6,7 +6,7 @@
 import numpy          as np
 import scipy.stats    as stats
 import scipy.optimize as optimize
-import iminuit        as im
+#import iminuit        as im # add minuit!
 
 def _llike(rv):
     meths = dir(rv)
@@ -148,10 +148,11 @@ def _getminimize(method):
         #print(method)
         return fun
     #print('Minuit')
-    return im.minimize
+    #return im.minimize
+    return None
 
 
-def minimize(par, mfun, mask = None, checkpar = None, method = 'Minuit'):
+def minimize(par, mfun, mask = None, checkpar = None, method = 'Nedel-Mead'):
     """ compute maximum likelihood estimate
     parameters:
         x    : np.array      ,   rvs

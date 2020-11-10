@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from hipy import utils as ut
+import hipy.utils as ut
 from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
     functions extending plt
 """
 
-def canvas(nx : int, ny : int = 2, height : float = 6., width : float = 4.) -> callable:
-    """ create a canvas with nx and ny subplots,
+def canvas(ns : int, ny : int = 2, height : float = 6., width : float = 4.) -> callable:
+    """ create a canvas with ns subplots and ny-columns,
     return a function to move to next subplot in the canvas
     """
     icd = 0
