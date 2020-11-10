@@ -91,7 +91,6 @@ def str_parameters(pars, covpars, parnames = None, formate = '6.2f'):
 def fgaus(x, a, b, c):
     """ return a gausian function
     """
-    if (c <= 0.): return 0.
     return a * np.exp(- (x-b)**2 / (2* c**2) )
 
 
