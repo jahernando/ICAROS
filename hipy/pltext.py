@@ -1,11 +1,10 @@
 import numpy as np
 import random
 import hipy.utils as ut
+import hypy.hfit  as hfit
 from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
-plt.style.context('seaborn-colorblind')
-
 from cycler import cycler
 
 
@@ -14,7 +13,7 @@ from cycler import cycler
 """
 
 def style():
-    """ my-style
+    """ mathplot style
     """
 
     plt.rcParams['axes.prop_cycle'] = cycler(color='kbgrcmy')
@@ -78,6 +77,35 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
     if (ylog): plt.yscale('log')
 
     return c
+
+#--- hfit
+
+
+def hfit(x, fun, guess = None, bins = 100, range = None,
+            parnames = None, formate = '6.2f'):
+    """ fit and plot a histogram to a function with guess parameters
+    inputs:
+    x    : np.array, values to build the histogram
+    fun  : callable(x, *parameters) or string, function to fit
+           str  = ['gaus', 'line', 'exp' ], for gaussian, line fit
+    guess: tuple (None), values of the guess/initial parameters for the fit
+           if fun is a predefined function, no need to add initial gess parameters
+    bins : int (100), tuple, bins of the histogram
+    range: tuple (None), range of the values to histogram
+    parnames : tuple(str) (None), names of the parameters
+    """
+    fun, guess, fnames = hfit.predefined_function(fun, guess, x)
+    ys, xs, _ = hist(x, bins, range = range, stats = False)
+    pars, parscov = hfit.hfit(x, fun, guess, bins, range)
+    xcs = 0.5* (xs[1:] + xs[:-1])
+    parnames = parnames if parnames is not None else fnames
+    ss  = str_parameters(pars, parscov, parnames, formate = formate)
+    plt.plot(xcs, fun(xcs, *pars), label = ss);
+    plt.legend()
+    return pars, parscov
+
+
+#---- DATA FRAME
 
 def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
     """ histogram the variables of a dataframe
