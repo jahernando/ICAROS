@@ -96,7 +96,7 @@ def hfit(x, fun, guess = None, bins = 100, range = None,
     """
     fun, guess, fnames = hfitm._predefined_function(fun, guess, x)
     ys, xs, _ = hist(x, bins, range = range, stats = False)
-    pars, parscov = hfit.hfit(x, fun, guess, bins, range)
+    pars, parscov = hfitm.hfit(x, fun, guess, bins, range)
     xcs = 0.5* (xs[1:] + xs[:-1])
     parnames = parnames if parnames is not None else fnames
     ss  = str_parameters(pars, parscov, parnames, formate = formate)
