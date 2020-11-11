@@ -37,7 +37,7 @@ def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> c
 def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
         grid = True, ylog = False, **kargs):
     """ decorate hist:
-    options: 
+    options:
     stats (bool) True, label the statistics a
     xylabels tuple(str) None; to write the x-y labels
     grid  (bool) True, set the grid option
@@ -60,9 +60,15 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
     c = plt.hist(x, bins, **kargs)
 
     if (xylabels is not None):
-        xlabel, ylabel = xylabels
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
+        
+        if (type(xylabels) == str):
+            plt.xlabel(xlabel)
+
+        if (type(xylabels) == tuple):
+            xlabel, ylabel = xylabels[0], xylabels[1]
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+
 
     if ('label' in kargs.keys()):
         plt.legend()
