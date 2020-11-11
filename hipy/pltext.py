@@ -99,7 +99,7 @@ def hfit(x, fun, guess = None, bins = 100, range = None,
     pars, parscov = hfitm.hfit(x, fun, guess, bins, range)
     xcs = 0.5* (xs[1:] + xs[:-1])
     parnames = parnames if parnames is not None else fnames
-    ss  = str_parameters(pars, parscov, parnames, formate = formate)
+    ss  = hfitm.str_parameters(pars, parscov, parnames, formate = formate)
     plt.plot(xcs, fun(xcs, *pars), label = ss);
     plt.legend()
     return pars, parscov
