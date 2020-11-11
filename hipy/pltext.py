@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import hipy.utils as ut
-import hypy.hfit  as hfit
+import hipy.hfit  as hfit
 from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
