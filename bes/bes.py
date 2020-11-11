@@ -1,4 +1,9 @@
-import numpy as np
+import numpy  as np
+import pandas as pd
+import tables as tb
+
+
+to_df = pd.DataFrame.from_records
 
 
 def energy_correction(energy, dz, a = 2.76e-4):
