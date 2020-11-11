@@ -6,9 +6,20 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 plt.style.context('seaborn-colorblind')
 
+from cycler import cycler
+
+
 """
     functions extending plt
 """
+
+def style():
+    """ my-style
+    """
+
+    plt.rcParams['axes.prop_cycle'] = cycler(color='kbgrcmy')
+    plt.style.context('seaborn-colorblind')
+    return
 
 
 def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> callable:
