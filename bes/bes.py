@@ -32,6 +32,10 @@ def get_ranges():
     ranges['energy_ds'] = (1.55, 1.75)
     ranges['energy_ph'] = (2.5, 3.)
 
+    ranges['enecor_cs'] = (0.65, 0.71)
+    ranges['enecor_ds'] = (1.55, 1.75)
+    ranges['enecor_ph'] = (2.5, 3.)
+
     ranges['z']  = (50., 500.)
     ranges['r']  = ( 0., 180.)
 
@@ -71,4 +75,4 @@ def dft_selections(dft):
     tsels['dz_ds'] = (dft.dz_track > 24.) & (dft.dz_track <  72.)
     tsels['dz_ph'] = (dft.dz_track > 35.) & (dft.dz_track < 130.)
 
-    return tsel
+    return tsels
