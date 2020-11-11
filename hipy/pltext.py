@@ -62,7 +62,7 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
     if (xylabels is not None):
 
         if (type(xylabels) == str):
-            plt.xlabel(xylabel)
+            plt.xlabel(xylabels)
 
         if (type(xylabels) == tuple):
             xlabel, ylabel = xylabels[0], xylabels[1]
