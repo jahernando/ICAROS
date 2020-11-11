@@ -6,7 +6,7 @@ import numpy             as np
 #import invisible_cities.core.fit_functions as fitf
 
 
-#--- histograming
+#--- general utilies
 
 def remove_nan(vals : np.array) -> np.array:
      return vals[~np.isnan(vals)]
@@ -17,6 +17,8 @@ def in_range(vals : np.array, range : tuple = None) -> np.array(bool):
     sel = (vals >= range[0]) & (vals < range[1])
     return sel
 
+def centers(xs):
+    return 0.5* ( xs[1: ] + xs[: -1])
 
 def stats(vals : np.array, range : tuple = None):
     vals = remove_nan(vals)
