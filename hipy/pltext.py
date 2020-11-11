@@ -65,10 +65,10 @@ def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
     if (labels is None):
         labels = list(df.columns)
     #print('labels : ', labels)
-    subplot = pltext.canvas(len(labels), ncolumns)
+    subplot = canvas(len(labels), ncolumns)
     for i, label in enumerate(labels):
         subplot(i + 1)
         values = ut.remove_nan(df[label].values)
         xrange = None if label not in ranges.keys() else ranges[label]
-        pltext.hist(values, bins, range = xrange)
+        hist(values, bins, range = xrange)
         plt.xlabel(label); plt.grid();
