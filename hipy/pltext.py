@@ -34,10 +34,14 @@ def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> c
     return subplot
 
 
-def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None, **kargs):
+def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
+        grid = True, ylog = False, **kargs):
     """ decorate hist:
-    options: stats (bool) True, label the statistics a
-             xylabels tuple(str) None; to write the x-y labels
+    options: 
+    stats (bool) True, label the statistics a
+    xylabels tuple(str) None; to write the x-y labels
+    grid  (bool) True, set the grid option
+    ylog  (bool) False, set the y-escale to log
     """
 
     if (not ('histtype' in kargs.keys())):
@@ -62,6 +66,10 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
 
     if ('label' in kargs.keys()):
         plt.legend()
+
+    if (grid): plt.grid(True)
+
+    if (ylog): plt.yscale('log')
 
     return c
 
