@@ -24,7 +24,9 @@ def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> c
 
 
 def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None, **kargs):
-    """ decorate hist to label the statistic and to write the x-y labels
+    """ decorate hist:
+    options: stats (bool) True, label the statistics a
+             xylabels tuple(str) None; to write the x-y labels
     """
 
     if (not ('histtype' in kargs.keys())):
@@ -35,14 +37,6 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
         formate = kargs['formate'] if 'formate' in kargs.keys() else '6.2f'
         ss = ut.str_stats(x, range = range, formate = formate)
 
-        #range = kargs['range'] if 'range' in kargs.keys() else (np.min(x), np.max(x))
-        #sel = (x >= range[0]) & (x <= range[1])
-        #mean = np.mean(x)
-        #std  = np.std(x)
-        #sentries  =  f'entries = {len(x)}'
-        #smean     =  r'mean = {:7.2f}'.format(mean)
-        #sstd      =  r'std  = {:7.2f}'.format(std)
-        #sstat     =  f'{sentries}\n{smean}\n{sstd}'
         if ('label' in kargs.keys()):
             kargs['label'] += '\n' + ss
         else:
@@ -59,3 +53,22 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
         plt.legend()
 
     return c
+
+def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
+    """ histogram the variables of a dataframe
+    df     : dataframe
+    labels : tuple(str) list of variables. if None all the columns of the DF
+    bins   : int (100), number of nbins
+    ranges : dict, range of the histogram, the key must be the column name
+    ncolumns: int (2), number of columns of the canvas
+    """
+    if (labels is None):
+        labels = list(df.columns)
+    #print('labels : ', labels)
+    subplot = pltext.canvas(len(labels), ncolumns)
+    for i, label in enumerate(labels):
+        subplot(i + 1)
+        values = ut.remove_nan(df[label].values)
+        xrange = None if label not in ranges.keys() else ranges[label]
+        pltext.hist(values, bins, range = xrange)
+        plt.xlabel(label); plt.grid();
