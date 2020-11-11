@@ -94,7 +94,7 @@ def hfit(x, fun, guess = None, bins = 100, range = None,
     range: tuple (None), range of the values to histogram
     parnames : tuple(str) (None), names of the parameters
     """
-    fun, guess, fnames = hfit.predefined_function(fun, guess, x)
+    fun, guess, fnames = hfit._predefined_function(fun, guess, x)
     ys, xs, _ = hist(x, bins, range = range, stats = False)
     pars, parscov = hfit.hfit(x, fun, guess, bins, range)
     xcs = 0.5* (xs[1:] + xs[:-1])
