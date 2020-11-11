@@ -21,6 +21,8 @@ def load_dfs(filename):
     dft['dz_track'] = dft['z_max'] - dft['z_min']
     dft['enecor']   = energy_correction(dft['energy'].values, dft['dz_track']. values)
 
+    return dfe, dfs, dft
+
 
 def get_ranges():
 
