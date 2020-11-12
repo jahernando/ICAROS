@@ -24,27 +24,10 @@ def load_dfs(filename):
     return dfe, dfs, dft
 
 
-def get_ranges():
-
-    ranges = {}
-    ranges['energy']    = (0., 3.)
-    ranges['energy_cs'] = (0.65, 0.71)
-    ranges['energy_ds'] = (1.55, 1.75)
-    ranges['energy_ph'] = (2.5, 3.)
-
-    ranges['enecor_cs'] = (0.65, 0.71)
-    ranges['enecor_ds'] = (1.55, 1.75)
-    ranges['enecor_ph'] = (2.5, 3.)
-
-    ranges['z']  = (50., 500.)
-    ranges['r']  = ( 0., 180.)
-
-    return ranges
-
-
 class Selections(dict):
     """ dictorinay to hold selection (np.array(bool)) with some extendions:
     """
+
 
     def logical_and(self, *names):
         """ return the selection that is the logical and of the names selections
@@ -61,18 +44,41 @@ class Selections(dict):
         return sel
 
 
-def dft_selections(dft):
+def get_ranges():
 
-    tsels = Selections()
-    tsels['onetrack']      = dft.numb_of_tracks == 1
+    ranges = {}
 
-    tsels['fidutial_zmin'] = dft.z_min > 50.
-    tsels['fidutial_zmax'] = dft.z_max < 500.
-    tsels['fidutial_rmax'] = dft.r_max < 180.
-    tsels['fidutial']      = tsels.logical_and('fidutial_zmin', 'fidutial_zmax', 'fidutial_rmax')
+    ranges['numb_of_tracks.one']   = (0.5, 1.5)
 
-    tsels['dz_cs'] = (dft.dz_track >  8.) & (dft.dz_track <  32.)
-    tsels['dz_ds'] = (dft.dz_track > 24.) & (dft.dz_track <  72.)
-    tsels['dz_ph'] = (dft.dz_track > 35.) & (dft.dz_track < 130.)
+    ranges['energy']    = (0., 3.)
 
-    return tsels
+    ranges['energy.cs'] = (0.65, 0.71)
+    ranges['energy.ds'] = (1.55, 1.75)
+    ranges['energy.ph'] = (2.5, 3.)
+
+    ranges['enecor.cs'] = (0.65, 0.71)
+    ranges['enecor.ds'] = (1.55, 1.75)
+    ranges['enecor.ph'] = (2.5, 3.)
+
+    ranges['z_min']  = (50., 500.)
+    ranges['z_max']  = (50., 500.)
+    ranges['r_max']  = ( 0., 180.)
+
+    ranges['dz_track.cs']  = ( 8., 32.)
+    ranges['dz_track.ds']  = (24., 72.)
+    ranges['dz_tracks.ph'] = (35., 130.)
+
+    return ranges
+
+
+def get_selections(dft, ranges, selections = None):
+
+    selections = bes.Selections() if selections is None else selections
+
+    for key in ranges.keys():
+            var = key.split('.')[0]
+
+            if var in dft.columns:
+                selections[key] = ut.in_range(dft[var], ranges[key])
+
+    return selections

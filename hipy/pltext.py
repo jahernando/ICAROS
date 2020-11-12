@@ -124,7 +124,7 @@ def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
         values = ut.remove_nan(df[label].values)
         xrange = None if label not in ranges.keys() else ranges[label]
         hist(values, bins, range = xrange)
-        plt.xlabel(label); plt.grid();
+        plt.xlabel(label);
 
 
 def corrmatrix(xdf, xlabels):
