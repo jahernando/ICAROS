@@ -111,8 +111,9 @@ def hfit(x, fun, guess = None, bins = 100, range = None,
 
 
 def hprofile(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
-              nbins_profile = 10, fig = True, **kargs):
-    fig = plt.figure() if fig is True else plt.gcf()
+              nbins_profile = 10, **kargs):
+    """
+    """
     urange = urange if urange is not None else (np.min(uvar), np.max(uvar))
     vrange = vrange if vrange is not None else (np.min(vvar), np.max(vvar))
     if 'label' not in kargs.keys(): kargs['label'] = vlabel
@@ -125,8 +126,7 @@ def hprofile(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None
 
 
 def hpscatter(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
-              nbins_profile = 10, fig = True, **kargs):
-    fig = plt.figure() if fig is True else plt.gcf()
+              nbins_profile = 10, **kargs):
     plt.scatter(uvar, vvar, **kargs)
     kargs['alpha'] = 0.8
     if ('c' in kargs.keys()): del kargs['c']
