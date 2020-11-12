@@ -125,3 +125,21 @@ def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
         xrange = None if label not in ranges.keys() else ranges[label]
         hist(values, bins, range = xrange)
         plt.xlabel(label); plt.grid();
+
+
+def corrmatrix(xdf, xlabels):
+    """ plot the correlation matrix of the selected labels from the dataframe
+    inputs:
+        xdf     : DataFrame
+        xlabels : tuple(str) list of the labels of the DF to compute the correlation matrix
+    """
+    _df  = xdf[xlabels]
+    corr = _df.corr()
+    fig = plt.figure(figsize=(12, 10))
+    #corr.style.background_gradient(cmap='Greys').set_precision(2)
+    plt.matshow(abs(corr), fignum = fig.number, cmap = 'Greys')
+    plt.xticks(range(_df.shape[1]), _df.columns, fontsize=14, rotation=45)
+    plt.yticks(range(_df.shape[1]), _df.columns, fontsize=14)
+    cb = plt.colorbar()
+    cb.ax.tick_params(labelsize=14)
+    return
