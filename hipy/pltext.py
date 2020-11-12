@@ -128,10 +128,10 @@ def hprofile(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None
 def hpscatter(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
               nbins_profile = 10, **kargs):
     plt.scatter(uvar, vvar, **kargs)
-    kargs['alpha'] = 0.8
+    #kargs['alpha'] = 0.8
     if ('c' in kargs.keys()): del kargs['c']
     #kargs['c']     = kargs['c'] if 'c' in kargs.keys() else 'black'
-    hprofile(uvar, vvar, ulabel, vlabel, urange, vrange, nbins_profile, fig = False, **kargs)
+    hprofile(uvar, vvar, ulabel, vlabel, urange, vrange, nbins_profile, **kargs)
     return
 
 
