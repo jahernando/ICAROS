@@ -2,6 +2,8 @@ import numpy  as np
 import pandas as pd
 import tables as tb
 
+import hipy.utils as ut
+
 
 to_df = pd.DataFrame.from_records
 
