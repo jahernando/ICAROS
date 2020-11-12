@@ -73,7 +73,7 @@ def get_ranges():
 
 def get_selections(dft, ranges, selections = None):
 
-    selections = bes.Selections() if selections is None else selections
+    selections = Selections() if selections is None else selections
 
     for key in ranges.keys():
             var = key.split('.')[0]
