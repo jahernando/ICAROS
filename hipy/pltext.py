@@ -4,6 +4,8 @@ import hipy.utils as ut
 import hipy.hfit  as hfitm
 from dataclasses import dataclass
 
+import invisible_cities.core.fit_functions as fitf
+
 import matplotlib.pyplot as plt
 from cycler import cycler
 
@@ -103,6 +105,34 @@ def hfit(x, fun, guess = None, bins = 100, range = None,
     plt.plot(xcs, fun(xcs, *pars), label = ss);
     plt.legend()
     return pars, parscov
+
+
+#---- Profile
+
+
+def hprofile(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
+              nbins_profile = 10, fig = True, **kargs):
+    fig = plt.figure() if fig is True else plt.gcf()
+    urange = urange if urange is not None else (np.min(uvar), np.max(uvar))
+    vrange = vrange if vrange is not None else (np.min(vvar), np.max(vvar))
+    if 'label' not in kargs.keys(): kargs['label'] = vlabel
+    if (nbins_profile):
+        xs, ys, eys = fitf.profileX(uvar, vvar, nbins_profile, urange, vrange, std = False)
+        plt.errorbar(xs, ys, yerr = eys, **kargs)
+    plt.xlabel(ulabel)
+    plt.ylabel(vlabel)
+    return
+
+
+def hpscatter(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
+              nbins_profile = 10, fig = True, **kargs):
+    fig = plt.figure() if fig is True else plt.gcf()
+    plt.scatter(uvar, vvar, **kargs)
+    kargs['alpha'] = 0.8
+    if ('c' in kargs.keys()): del kargs['c']
+    #kargs['c']     = kargs['c'] if 'c' in kargs.keys() else 'black'
+    hprofile(uvar, vvar, ulabel, vlabel, urange, vrange, nbins_profile, fig = False, **kargs)
+    return
 
 
 #---- DATA FRAME
