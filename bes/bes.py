@@ -28,6 +28,20 @@ def load_dfs(filename):
     return dfe, dfs, dft
 
 
+def get_dft(filenames):
+
+    dft = None
+
+    for i, filename in enumerate(filenames):
+
+        print('data filename: ', filename)
+
+        idfe, idfs, idft = bes.load_dfs(filename)
+
+        dft = idft if i == 0 else dft.append(idft, ignore_index = True)
+
+    return dft
+
 #----  Selections
 
 
