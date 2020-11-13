@@ -58,6 +58,27 @@ def get_dft(filenames):
 
     return dft
 
+def get_df_zeffect(filename):
+
+    dfe, dfs, dft = load_dfs(filename)
+
+    dfe_section = dfe[['event', 'time', 'nS2', 'S1e', 'S2e', 'S2q', 'Nsipm']]
+    dfs_section = dfs[['event', 'evt_energy', 'evt_ntrks', 'evt_nhits']]
+    dft_section = dft[['event', 'trackID', 'energy', 'length', 'numb_of_voxels',
+                       'numb_of_hits', 'numb_of_tracks',
+                       'x_min', 'y_min', 'z_min', 'r_min', 'x_max', 'y_max', 'z_max', 'r_max',
+                       'x_ave', 'y_ave', 'z_ave', 'r_ave',
+                       'extreme1_x', 'extreme1_y', 'extreme1_z',
+                       'extreme2_x', 'extreme2_y', 'extreme2_z',
+                       'blob1_x', 'blob1_y', 'blob1_z', 'blob2_x',
+                       'blob2_y', 'blob2_z', 'eblob1', 'eblob2',
+                       'ovlp_blob_energy', 'dz_track', 'enecor']]
+
+    dd = pd.merge(dft_section, dfe_section, on = 'event')
+    dd = pd.merge(dd         , dfs_section, on = 'event')
+
+    return dd
+
 #----  Selections
 
 
