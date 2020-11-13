@@ -11,10 +11,20 @@ to_df = pd.DataFrame.from_records
 
 
 def energy_correction(energy, dz, a = 2.76e-4):
+    """ Apply Josh's energy correction by delta-z effect
+    """
     return energy/(1 - a * dz)
 
 
 def load_dfs(filename):
+    """ load DF from esmeralda:
+    input:
+        filename: str, complete filename
+    returns:
+        dfe, DF, event data frame
+        dfs, DF, summary data frame
+        dft, DF, tracks data frame
+    """
     f = tb.open_file(filename, 'r')
 
     dfe = to_df(f.root.DST.Events.read())
@@ -29,6 +39,12 @@ def load_dfs(filename):
 
 
 def get_dft(filenames):
+    """ return the track DF from Esmeralda filenames
+    inputs:
+        filenames: tup(str), list of complete Esmeralda's filenames
+    returns:
+        dft: DF, track data frame
+    """
 
     dft = None
 
@@ -36,7 +52,7 @@ def get_dft(filenames):
 
         print('data filename: ', filename)
 
-        idfe, idfs, idft = bes.load_dfs(filename)
+        idfe, idfs, idft = load_dfs(filename)
 
         dft = idft if i == 0 else dft.append(idft, ignore_index = True)
 
