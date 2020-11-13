@@ -5,6 +5,8 @@ import tables as tb
 import hipy.utils as ut
 
 
+#---- DataFrame
+
 to_df = pd.DataFrame.from_records
 
 
@@ -24,6 +26,9 @@ def load_dfs(filename):
     dft['enecor']   = energy_correction(dft['energy'].values, dft['dz_track']. values)
 
     return dfe, dfs, dft
+
+
+#----  Selections
 
 
 class Selections(dict):
@@ -52,6 +57,8 @@ def get_ranges():
 
     ranges['numb_of_tracks.one']   = (0.5, 1.5)
 
+    ranges['nS2'] = (0.5, 1.5)
+
     ranges['energy']    = (0., 3.)
 
     ranges['energy.cs'] = (0.65, 0.71)
@@ -68,7 +75,7 @@ def get_ranges():
 
     ranges['dz_track.cs']  = ( 8., 32.)
     ranges['dz_track.ds']  = (24., 72.)
-    ranges['dz_tracks.ph'] = (35., 130.)
+    ranges['dz_track.ph'] = (35., 130.)
 
     return ranges
 
