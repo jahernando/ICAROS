@@ -109,41 +109,84 @@ def hfit(x, fun, guess = None, bins = 100, range = None,
 
 #---- Profile
 
-
-def hprofile(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
-              nbins_profile = 10, **kargs):
+def hprofile(x, y, nbins = 10, std = False, xrange = None , yrange = None,  **kargs):
     """
     """
-    urange = urange if urange is not None else (np.min(uvar), np.max(uvar))
-    vrange = vrange if vrange is not None else (np.min(vvar), np.max(vvar))
-    if 'label' not in kargs.keys(): kargs['label'] = vlabel
-    if (nbins_profile):
-        xs, ys, eys = fitf.profileX(uvar, vvar, nbins_profile, urange, vrange, std = False)
-        plt.errorbar(xs, ys, yerr = eys, **kargs)
-    plt.xlabel(ulabel)
-    plt.ylabel(vlabel)
-    return
+    xs, ys, eys = fitf.profileX(x, y, nbins, xrange, yrange, std = std)
+    plt.errorbar(xs, ys, yerr = eys, **kargs)
+    return xs, ys, eys
 
 
-def hpscatter(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
-              nbins_profile = 10, **kargs):
-    plt.scatter(uvar, vvar, **kargs)
+def hprofile_scatter(x, y, nbins = 10, std = False, xrange = None , yrange = None,  **kargs):
+    """
+    """
+    plt.scatter(x, y, **kargs)
     kargs['alpha'] = 1.
-    if ('c' in kargs.keys()): del kargs['c']
-    #kargs['c']     = kargs['c'] if 'c' in kargs.keys() else 'black'
-    hprofile(uvar, vvar, ulabel, vlabel, urange, vrange, nbins_profile, **kargs)
-    return
+    xs,ys, eys = hprofile(x, y, nbins, std, xrange, yrange, **kargs)
+    return xs, ys, eys
+
+
+#def hpscatter(uvar, vvar, ulabel = '', vlabel = '', urange = None , vrange = None,
+#              nbins_profile = 10, **kargs):
+#    plt.scatter(uvar, vvar, **kargs)
+#    kargs['alpha'] = 1.
+#    if ('c' in kargs.keys()): del kargs['c']
+#    #kargs['c']     = kargs['c'] if 'c' in kargs.keys() else 'black'
+#    hprofile(uvar, vvar, ulabel, vlabel, urange, vrange, nbins_profile, **kargs)
+#    return
+
+
+def hprofile_in_sigma(x, y, nbins = 20, nsigma = 2, niter = 10, **kargs):
+    """ plot profile after n-iterations selection entries in the nsigma window in x.
+    inputs:
+        x     : np.array, x-values
+        y     : np.array, y-values
+        nbins : int, number of profile bins in the x-range
+        nsigma: float, number of std in the y-bins to accept in the next iteration
+        niter : int, number of iterations
+        kargs : extra matplot plot key-options
+    returns:
+        xs    : x-points of the n-iteration profile
+        ys    : y-points
+        eys   : y-errors
+    """
+
+    def in_sigma(x, y, xs, ys, eys, nsigma):
+        xx = np.copy(x)
+        xx[xx <= xs[0]]  = xs[0]
+        xx[xx >= xs[-1]] = xs[-1]
+        x0  = np.min(xx)
+        dx  = xs[1] - xs[0]
+        ix  = ((xx-x0 - 0.5* dx ) / dx).astype(int)
+        nbins = len(ys)
+        ix[ ix == nbins ] = nbins - 1
+        yr = ys[ix]
+        sel = np.abs(y - yr) < nsigma * eys[ix]
+        return (x[sel], y[sel])
+
+    xs, ys, eys = None, None, None
+    for i in range(niter):
+        ix, iy = (x, y) if i == 0 else in_sigma(x, y, xs, ys, eys, nsigma)
+        xs, ys, eys = fitf.profileX(ix, iy, nbins, std = True);
+        if (i == niter - 1):
+            #hprofile(x, y, nbins, **kargs)
+            plt.errorbar(xs, ys, yerr = eys, **kargs)
+
+    return xs, ys, eys
+
+
 
 
 #---- DATA FRAME
 
 def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
     """ histogram the variables of a dataframe
-    df     : dataframe
-    labels : tuple(str) list of variables. if None all the columns of the DF
-    bins   : int (100), number of nbins
-    ranges : dict, range of the histogram, the key must be the column name
-    ncolumns: int (2), number of columns of the canvas
+    inputs:
+        df      : dataframe
+        labels  : tuple(str) list of variables. if None all the columns of the DF
+        bins    : int (100), number of nbins
+        ranges  : dict, range of the histogram, the key must be the column name
+        ncolumns: int (2), number of columns of the canvas
     """
     if (labels is None):
         labels = list(df.columns)
