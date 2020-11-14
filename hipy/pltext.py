@@ -159,7 +159,7 @@ def hprofile_in_sigma(x, y, nbins = 20, nsigma = 2, niter = 10, **kargs):
         dx  = xs[1] - xs[0]
         ix  = ((xx-x0 - 0.5* dx ) / dx).astype(int)
         nbins = len(ys)
-        ix[ ix == nbins ] = nbins - 1
+        ix[ ix >= nbins ] = nbins - 1
         yr = ys[ix]
         sel = np.abs(y - yr) < nsigma * eys[ix]
         return (x[sel], y[sel])
