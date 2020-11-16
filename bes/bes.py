@@ -150,7 +150,7 @@ class Selections:
         s = ''
         for key in self.sels.keys():
             nevt = np.sum(self[key])
-            ieff = nevt/sef.size
+            ieff = nevt/self.size
             s += key + ' : ' + self[key].info + ', '
             s += ' entries ', str(nevt) + ', efficiency ' + '{0:4f2}'.format(ieff) +'\n'
         return s
