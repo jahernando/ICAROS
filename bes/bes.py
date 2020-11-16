@@ -159,10 +159,11 @@ class Selections:
 
         sel = ut.in_range(self.df[varname], range)
 
-        self.sels[name] = Selections._sel(sel, str(range))
+        ss = str(varname) + ' [' + str(range[0]) + ', ' + str(range[1])+ ']'
+
+        self.sels[name] = Selections._sel(sel, ss)
 
         return self[name]
-
 
 
     def logical_and(self, names, name = None):
@@ -177,14 +178,13 @@ class Selections:
         for iname in names[2:]:
             sel = sel & self[iname]
 
-        if (name is None): return sel
-
         if (name in self.sels.keys()):
-            print('warning ', name, ' already in selections')
+            print('overwriting ', name, ' selection')
 
-        csel = Selections._sel(sel, str(names))
+        ss = [self[iname].info  for iname in names]
+        csel = Selections._sel(sel, str(ss))
 
+        if (name is not None):
+            self.sels[name] = csel
 
-        self.sels[name] = csel
-
-        return self[name]
+        return csel
