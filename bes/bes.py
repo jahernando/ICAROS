@@ -184,7 +184,11 @@ class Selections:
         if (name in self.sels.keys()):
             print('overwriting ', name, ' selection')
 
-        ss = [self[iname].info  for iname in names]
+        ss = ''
+        for iname in names:
+            ss += self[iname].info
+            if (iname != names[-1]): ss += ' & '
+        #ss = [self[iname].info  for iname in names]
         csel = Selections._sel(sel, str(ss))
 
         if (name is not None):
