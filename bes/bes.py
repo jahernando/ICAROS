@@ -123,11 +123,15 @@ class Selections:
         return csel
 
 
-    def __init__(self, df):
+    def __init__(self, df, ranges = None):
 
         self.df   = df
         self.size = len(df)
         self.sels = dict()
+
+        if ranges is not None:
+            for key in ranges.keys():
+                self.set_range(key, ranges[key])
 
         return
 
@@ -144,7 +148,7 @@ class Selections:
 
     def __str__(self):
         s = ''
-        for key in selections.keys():
+        for key in self.sels.keys():
             s += key + ' : ' + self[key].info + ', ' + str(np.sum(self[key])) + '\n'
         return s
 
