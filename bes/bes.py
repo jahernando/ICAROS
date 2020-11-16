@@ -81,34 +81,13 @@ def get_df_zeffect(filename):
 
 #----  Selections
 
-
-class Selections(dict):
-    """ dictorinay to hold selection (np.array(bool)) with some extendions:
-    """
-
-
-    def logical_and(self, *names):
-        """ return the selection that is the logical and of the names selections
-        names: list of names of the selections
-        """
-
-        assert len(names) >= 2
-        name0, name1 = names[0], names[1]
-        sel = self[name0] & self[name1]
-
-        for name in names[2:]:
-            sel = sel & self[name]
-
-        return sel
-
-
 def get_ranges():
 
     ranges = {}
 
     ranges['numb_of_tracks.one']   = (0.5, 1.5)
 
-    ranges['nS2'] = (0.5, 1.5)
+    #ranges['nS2'] = (0.5, 1.5)
 
     ranges['energy']    = (0., 3.)
 
@@ -130,15 +109,78 @@ def get_ranges():
 
     return ranges
 
+class Selections:
+    """ dictorinay to hold selection (np.array(bool)) with some extendions:
+    """
 
-def get_selections(dft, ranges, selections = None):
+    class Sel(np.ndarray): pass
 
-    selections = Selections() if selections is None else selections
 
-    for key in ranges.keys():
-            var = key.split('.')[0]
+    def _sel(sel, info):
 
-            if var in dft.columns:
-                selections[key] = ut.in_range(dft[var], ranges[key])
+        csel = sel.view(Selections.Sel)
+        csel.info = info
+        return csel
 
-    return selections
+
+    def __init__(self, df):
+
+        self.df   = df
+        self.size = len(df)
+        self.sels = dict()
+
+        return
+
+
+    def __getitem__(self, key):
+
+        return self.sels[key]
+
+
+    def keys(self):
+
+        return self.sels.keys()
+
+
+    def __str__(self):
+        s = ''
+        for key in selections.keys():
+            s += key + ' : ' + self[key].info + ', ' + str(np.sum(self[key])) + '\n'
+        return s
+
+
+    def set_range(self, name, range = None, varname = None):
+
+        varname = varname if varname is not None else name.split('.')[0]
+
+        sel = ut.in_range(self.df[varname], range)
+
+        self.sels[name] = Selections._sel(sel, str(range))
+
+        return self[name]
+
+
+
+    def logical_and(self, names, name = None):
+        """ return the selection that is the logical and of the names selections
+        names: list of names of the selections
+        """
+
+        assert len(names) >= 2
+        name0, name1 = names[0], names[1]
+        sel = self[name0] & self[name1]
+
+        for iname in names[2:]:
+            sel = sel & self[iname]
+
+        if (name is None): return sel
+
+        if (name in self.sels.keys()):
+            print('warning ', name, ' already in selections')
+
+        csel = Selections._sel(sel, str(names))
+
+
+        self.sels[name] = csel
+
+        return self[name]
