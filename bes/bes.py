@@ -149,7 +149,10 @@ class Selections:
     def __str__(self):
         s = ''
         for key in self.sels.keys():
-            s += key + ' : ' + self[key].info + ', ' + str(np.sum(self[key])) + '\n'
+            nevt = np.sum(self[key])
+            ieff = nevt/sef.size
+            s += key + ' : ' + self[key].info + ', '
+            s += ' entries ', str(nevt) + ', efficiency ' + '{0:4f2}'.format(ieff) +'\n'
         return s
 
 
