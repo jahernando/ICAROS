@@ -152,7 +152,7 @@ class Selections:
             nevt = np.sum(self[key])
             ieff = nevt/self.size
             s += key + ' : ' + self[key].info + ', '
-            s += ' entries ', str(nevt) + ', efficiency ' + '{0:4.3f}'.format(ieff) +'\n'
+            s += ' entries ', str(nevt) + ', efficiency ' + ('{0:4.3f}'.format(ieff)) +'\n'
         return s
 
 
