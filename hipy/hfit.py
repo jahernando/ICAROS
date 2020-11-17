@@ -29,17 +29,22 @@ def _predefined_function(fun, guess, x):
 
     return fun, guess, fnames
 
-def hfit(x, fun, guess = None, bins = 100, range = None):
+def hfit(x, bins, fun, guess = None, range = None):
     """ fit a histogram to a function with guess parameters
     inputs:
     x    : np.array, values to build the histogram
+    bins : int (100), tuple, bins of the histogram
     fun  : callable(x, *parameters) or string, function to fit
            str  = ['gaus', 'line', 'exp' ], for gaussian, line fit
     guess: tuple (None), values of the guess/initial parameters for the fit
            if fun is a predefined function, no need to add initial gess parameters
-    bins : int (100), tuple, bins of the histogram
     range: tuple (None), range of the values to histogram
+
+    TODO : add a mask argument to mask the parameters to fix in the fit!
+    TODO : consider the errors in the histogram!
+    TODO : check that the returned errors are ok!
     """
+
 
     fun, guess, _ = _predefined_function(fun, guess, x)
 
@@ -51,31 +56,6 @@ def hfit(x, fun, guess = None, bins = 100, range = None):
     return fpar, np.sqrt(np.diag(fcov))
 
 
-def plt_hfit(x, fun, guess = None, bins = 100, range = None,
-            parnames = None, formate = '6.2f'):
-    """ fit and plot a histogram to a function with guess parameters
-    inputs:
-    x    : np.array, values to build the histogram
-    fun  : callable(x, *parameters) or string, function to fit
-           str  = ['gaus', 'line', 'exp' ], for gaussian, line fit
-    guess: tuple (None), values of the guess/initial parameters for the fit
-           if fun is a predefined function, no need to add initial gess parameters
-    bins : int (100), tuple, bins of the histogram
-    range: tuple (None), range of the values to histogram
-    parnames : tuple(str) (None), names of the parameters
-    """
-    fun, guess, fnames = _predefined_function(fun, guess, x)
-    ys, xs, _ = plt.hist(x, bins, range, histtype = 'step')
-    pars, parscov = hfit(x, fun, guess, bins, range)
-    xcs = 0.5* (xs[1:] + xs[:-1])
-    parnames = parnames if parnames is not None else fnames
-    ss  = str_parameters(pars, parscov, parnames, formate = formate)
-    plt.plot(xcs, fun(xcs, *pars), label = ss)
-    plt.legend()
-    return pars, parscov
-
-
-
 def str_parameters(pars, covpars, parnames = None, formate = '6.2f'):
     s = ''
     for i, par in enumerate(pars):
@@ -85,7 +65,6 @@ def str_parameters(pars, covpars, parnames = None, formate = '6.2f'):
         s += (('{0:'+formate+'}').format(par))   + r'$\pm$'
         s += (('{0:'+formate+'}').format(covpar))+ '\n'
     return s
-
 
 
 def fgaus(x, a, b, c):
