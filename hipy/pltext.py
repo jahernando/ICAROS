@@ -103,6 +103,8 @@ def hfit(x, bins, fun, guess = None, range = None,
     xcs = 0.5* (xs[1:] + xs[:-1])
     parnames = parnames if parnames is not None else fnames
     ss  = hfitm.str_parameters(pars, parscov, parnames, formate = formate)
+    if ('label' in kargs.keys()):
+        kargs[label] += '\n' + ss
     plt.plot(xcs, fun(xcs, *pars), label = ss, **kargs);
     plt.legend()
     return pars, parscov
