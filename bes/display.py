@@ -102,7 +102,7 @@ def wf(z, erec, eraw = None, step = 2.):
 
     bins = np.arange(np.min(z), np.max(z) + step, step)
 
-    pltext.hist(z, bins, weights = scale * erec, alpha = 0.5, stats = False,
+    pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False,
                 density = True, label = 'rec')
     if (eraw is None): return
 
