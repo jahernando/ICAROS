@@ -32,28 +32,30 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
     fig = plt.figure(figsize=(12, 9));
     #plt.subplots(2
     ax3D = fig.add_subplot(221, projection='3d')
-    p3d = ax3D.scatter(z, x, y, s = scale, c = rene, alpha = 0.2, marker='s')
+    size   = scale       * (1. + rene)
+    color  = np.max(ene) * rene
+    p3d = ax3D.scatter(z, x, y, s = size, c = color, alpha = 0.2, marker='s')
     ax3D.set_xlabel('z (mm)')
     ax3D.set_ylabel('x (mm)')
     ax3D.set_zlabel('y (mm)')
     plt.title(title)
 
     plt.subplot(2, 2, 2)
-    plt.scatter(x, z, s = scale, c = rene, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.scatter(x, z, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('z (mm)')
     plt.colorbar();
 
     plt.subplot(2, 2, 3)
-    plt.scatter(z, y, s = scale, c = rene, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.scatter(z, y, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
     ax = plt.gca()
     ax.set_xlabel('z (mm)')
     ax.set_ylabel('y (mm)')
     plt.colorbar();
 
     plt.subplot(2, 2, 4)
-    plt.scatter(x, y, s = scale, c = rene, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.scatter(x, y, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('y (mm)')
