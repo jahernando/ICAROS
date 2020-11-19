@@ -98,12 +98,16 @@ def wf(z, erec, eraw = None, step = 2.):
         step : float (2), wf-step size
     """
 
+    pltext.canvas(1, 1, 6, 8)
+
     bins = np.arange(np.min(z), np.max(z) + step, step)
 
-    pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False, label = 'rec')
+    pltext.hist(z, bins, weights = scale * erec, alpha = 0.5, stats = False,
+                density = True, label = 'rec')
     if (eraw is None): return
 
-    pltext.hist(z, bins, weights = eraw, alpha = 0.5, stats = False, label = 'raw')
+    pltext.hist(z, bins, weights = eraw, alpha = 0.5, stats = False,
+                density = True, label = 'raw')
     plt.legend()
 
     plt.gca().twinx()
@@ -119,12 +123,12 @@ def wf(z, erec, eraw = None, step = 2.):
     return
 
 
-def xyspot(x, y, e, eraw = None, step = 10., **kargs):
+def xyspot(x, y, erec, eraw = None, step = 10., **kargs):
     """ Draw the (x, y) enery spot
     inputs:
         x    : np.array, x-hit positions
         y    : np.array, y-hit positions
-        e    : np.array, energy or intensity of the hits
+        erec : np.array, energy or intensity of the hits
         eraw : np.array (optional), energy raw of the hits (optional)
         step : float (10), xy-step size
     """
@@ -137,7 +141,7 @@ def xyspot(x, y, e, eraw = None, step = 10., **kargs):
     subplot = pltext.canvas(nplots)
 
     subplot(1)
-    plt.hist2d(x, y, bins, weights = e, **kargs);
+    plt.hist2d(x, y, bins, weights = erec, **kargs);
     plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
     cbar = plt.colorbar(); cbar.set_label('Energy (keV)')
 
