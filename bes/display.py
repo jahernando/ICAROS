@@ -105,7 +105,7 @@ def wf(z, erec, eraw = None, step = 2.,
     print(nplots)
     subplot = pltext.canvas(nplots)
 
-    subplot = pltext.canvas(1)
+    subplot = pltext.canvas(nplots)
     xlabel, elabel = xylabels[:2]
 
     bins = np.arange(np.min(z), np.max(z) + step, step)
@@ -133,7 +133,7 @@ def wf(z, erec, eraw = None, step = 2.,
     plt.xlabel(xlabel); plt.ylabel(elabel + '/' + e2label)
 
     plt.tight_layout()
-    
+
     return
 
 
