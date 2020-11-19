@@ -89,34 +89,32 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
     return
 
 
-def wf(z, e, eraw = None, step = 2.):
+def wf(z, erec, eraw = None, step = 2.):
     """ Draw the (e, z) wave-form
     inputs:
         z    : np.array, z-hit positions
-        e    : np.array, energy or intensity of the hits
+        erec : np.array, energy or intensity of the hits
         eraw : np.array (optional), energy raw of the hits
         step : float (2), wf-step size
     """
 
-    bins =  ut.arstep(z, step)
-    nplots = 1 if eraw is None else 2
-    subplot = pltext.canvas(nplots)
 
-    subplot(1)
-    pltext.hist(z, bins, weights = e, alpha = 0.5, stats = False, lw = 2)
-    plt.xlabel('z (mm)'); plt.ylabel('E (keV)')
+    pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False, lw = 2, label = 'rec')
 
     if (eraw is None): return
 
-    plt.gca().twinx();
-    pltext.hist(z, bins, weights = eraw, alpha = 0.4, stats = False,
-                lw = 2, color = 'blue')
-    plt.xlabel('z (mm)'); plt.ylabel('E (adc)', c = 'blue')
+    pltext.hist(z, bins, weights = eraw, alpha = 0.5, stats = False, lw = 2, label = 'raw')
+    plt.legend()
 
-    subplot(2)
-    pltext.hist(z, bins, weights = e/eraw, stats = False)
-    plt.xlabel('z (mm)'); plt.ylabel('calibration (keV/adc)')
-    plt.tight_layout()
+    plt.gca().twinx()
+    wf_rec, wf_zs = np.histogram(z, bins, weights = erec)
+    wf_raw, wf_zs = np.histogram(z, bins, weights = eraw)
+
+    wf_fc  = wf_rec/wf_raw
+    wf_zcs = ut.centers(wf_zs)
+
+    plt.plot(wf_zcs, wf_fc, color = 'red', marker = 'o');
+    plt.ylabel('factor', color = 'red')
 
     return
 
