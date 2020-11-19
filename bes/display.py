@@ -121,7 +121,7 @@ def wf(z, e, eraw = None, step = 2.):
     return
 
 
-def xyspot(x, y, e, eraw = None, step = 10.):
+def xyspot(x, y, e, eraw = None, step = 10., **kargs):
     """ Draw the (x, y) enery spot
     inputs:
         x    : np.array, x-hit positions
@@ -131,6 +131,7 @@ def xyspot(x, y, e, eraw = None, step = 10.):
         step : float (10), xy-step size
     """
 
+    if (not 'cmap' in kargs.keys()): kargs['cmap'] = 'Greys'
 
     bins = (ut.arstep(x, step), ut.arstep(y, step))
 
@@ -138,17 +139,17 @@ def xyspot(x, y, e, eraw = None, step = 10.):
     subplot = pltext.canvas(nplots)
 
     subplot(1)
-    plt.hist2d(x, y, bins, weights = e, cmap = 'Greys');
+    plt.hist2d(x, y, bins, weights = e, **kargs);
     plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
     cbar = plt.colorbar(); cbar.set_label('Energy (keV)')
 
     subplot(2)
-    plt.hist2d(x, y, bins, weights = eraw, cmap = 'Greys');
+    plt.hist2d(x, y, bins, weights = eraw, **kargs);
     plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
     cbar = plt.colorbar(); cbar.set_label('Energy (adc)')
 
     subplot(3)
-    plt.hist2d(x, y, bins, weights = e/eraw, cmap = 'Greys');
+    plt.hist2d(x, y, bins, weights = e/eraw, **kargs);
     plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
     cbar = plt.colorbar(); cbar.set_label('calibration factor (keV/adc)')
 
