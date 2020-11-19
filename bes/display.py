@@ -90,90 +90,83 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
 
 #--- WFs
 
-def wf(z, erec, eraw,  step = 2.,
-       xylabels = ('z (mm)', 'E (keV)', ' E (adc)'), **kargs):
-    """ Draw the (e, z) wave-form
+def wf(x, y, z, ene, zstep = 2., xystep = 10.,
+       elabel = 'Energy (keV)', **kargs):
+    """ Draw the x- waveform and (x, y) energy plane
     inputs:
+        x    : np.array, x-hit positions
+        y    : np.array, y-hit positions
         z    : np.array, z-hit positions
         erec : np.array, energy or intensity of the hits
-        eraw : np.array, energy raw of the hits
         step : float (2), wf-step size
         xylabels :  tuple(str), labes of x, y, erec and eraw
     """
 
-    subplot = pltext.canvas(1, 1, 6, 8)
+    xlabel, ylabel, zlabel = 'x (mm)', 'y (mm)', 'z (mm)'
+    subplot = pltext.canvas(2)
 
-    xlabel, elabel, e2label = xylabels
-
-    bins = np.arange(np.min(z), np.max(z) + step, step)
+    xbins = ut.arstep(z, zstep)
 
     subplot(1)
-    pltext.hist(z, bins, weights = erec, stats = False, density = True,
-                label = elabel , **kargs)
-    pltext.hist(z, bins, weights = eraw, stats = False, density = True,
-                label = e2label, **kargs)
-    plt.xlabel(xlabel);
+    pltext.hist(z, xbins, weights = erec, stats = False)
+    plt.xlabel(zlabel); plt.ylabel(elabel)
 
-    plt.gca().twinx()
-    wf_rec, wf_zs = np.histogram(z, bins, weights = erec)
-    wf_raw, wf_zs = np.histogram(z, bins, weights = eraw)
 
-    wf_fc  = wf_rec/wf_raw
-    wf_zcs = ut.centers(wf_zs)
+    subplot(2)
+    xybins = (ut.arstep(x, xystep), ut.arstep(y, xystep))
+    plt.hist2d(x, y, xybins, weights = erec, **kargs);
+    plt.xlabel(xlabel); plt.ylabel(ylabel);
+    cbar = plt.colorbar(); cbar.set_label(elabel)
 
-    plt.plot(wf_zcs, wf_fc, marker = 'o');
-    plt.ylabel(elabel + '/' + e2label)
 
     plt.tight_layout()
 
     return
 
-
-def xyspot(x, y, erec, eraw = None, step = 10.,
-           xylabels = ('x (mm)', 'y (mm)', 'Energy (keV)', 'Energy (adc)'),
-           **kargs):
-    """ Draw the (x, y) enery spot
+def wfcalib(x, y, z, erec, eraw, zstep = 2, xystep = 10.,
+            elabels = ('Energy (keV)', 'Energy (adc)'), **kargs):
+    """ Draw calibration factor erec/eraw in wf and (x,y) plane
     inputs:
         x    : np.array, x-hit positions
         y    : np.array, y-hit positions
+        x    : np.array, z-positions
         erec : np.array, energy or intensity of the hits
         eraw : np.array (optional), energy raw of the hits (optional)
         step : float (10), xy-step size
-        xylabels :  tuple(str), labes of x, y, erec and eraw
+        xylabels :  tuple(str), labes of energy erec, eraw
     """
 
-    bins = (ut.arstep(x, 10), ut.arstep(y, 10.))
-    xlabel, ylabel, elabel = xylabels[:3]
-
-    nplots = 1 if eraw is None else 3
-    subplot = pltext.canvas(nplots)
+    xlabel, ylabel, zlabel = 'x (mm)', 'y (mm)', 'z (mm)'
+    elabel, e2label = elabels
+    subplot = pltext.canvas(2)
 
     subplot(1)
-    qrecs, xs, ys = np.histogram2d(x, y, bins, weights = erec);
-    xms, yms = np.meshgrid(ut.centers(xs), ut.centers(ys))
-    plt.hist2d(xms.flatten(), yms.flatten(), bins, weights = qrecs.T.flatten(), **kargs);
-    plt.xlabel(xlabel); plt.ylabel(ylabel);
-    cbar = plt.colorbar(); cbar.set_label(elabel)
-    # is the same:
-    # plt.hist2d(x, y, bins, weights = erec);
 
-    if (nplots == 1): return
-    e2label = xylabels[3]
+    zbins = ut.arstep(z, zstep)
+
+    wf_rec, wf_zs = np.histogram(z, zbins, weights = erec)
+    wf_raw, wf_zs = np.histogram(z, zbins, weights = eraw)
+
+    wf_fc  = wf_rec/wf_raw
+    wf_zcs = ut.centers(wf_zs)
+
+    #pltext.hist(wf_zcs, zbins, weights = wf_rec, stats = False)
+    #plt.gca().twinx()
+    #plt.xlabel(xlabel); plt.ylabel(elabel)
+    pltext.hist(wf_zcs, zbins, weights = wf_fc, stats = False);
+    plt.xlabel(xlabel); plt.ylabel(elabel + '/' + e2label)
 
     subplot(2)
 
-    qraws, xs, ys = np.histogram2d(x, y, bins, weights = eraw);
-    plt.hist2d(xms.flatten(), yms.flatten(), bins, weights = qrecs.T.flatten(), **kargs);
-    plt.xlabel(xlabel); plt.ylabel(ylabel);
-    cbar = plt.colorbar(); cbar.set_label(e2label)
-
-
-    subplot(3)
+    xybins = (ut.arstep(x, xystep), ut.arstep(y, xystep))
+    qrecs, xs, ys = np.histogram2d(x, y, xybins, weights = erec);
+    qraws, xs, ys = np.histogram2d(x, y, xybins, weights = eraw);
     fc = qrecs/qraws
     fc[np.isnan(fc)] = 0.
-    plt.hist2d(xms.flatten(), yms.flatten(), bins, weights = fc.T.flatten(), **kargs);
+    plt.hist2d(xms.flatten(), yms.flatten(), xybins, weights = fc.T.flatten(), **kargs);
     plt.xlabel(xlabel); plt.ylabel(ylabel);
     cbar = plt.colorbar(); cbar.set_label(elabel + '/' + e2label)
 
     plt.tight_layout()
+
     return
