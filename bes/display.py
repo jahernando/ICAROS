@@ -98,12 +98,12 @@ def wf(z, erec, eraw = None, step = 2.):
         step : float (2), wf-step size
     """
 
+    bins = ut.arstep(np.min(z), np.max(z) + step, step)
 
-    pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False, lw = 2, label = 'rec')
-
+    pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False, label = 'rec')
     if (eraw is None): return
 
-    pltext.hist(z, bins, weights = eraw, alpha = 0.5, stats = False, lw = 2, label = 'raw')
+    pltext.hist(z, bins, weights = eraw, alpha = 0.5, stats = False, label = 'raw')
     plt.legend()
 
     plt.gca().twinx()
