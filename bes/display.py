@@ -59,7 +59,7 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
     plt.colorbar();
 
     plt.subplot(2, 2, 3)
-    plt.scatter(z, y, s = size, c = color, *kargs')
+    plt.scatter(z, y, s = size, c = color, **kargs)
     ax = plt.gca()
     ax.set_xlabel('z (mm)')
     ax.set_ylabel('y (mm)')
