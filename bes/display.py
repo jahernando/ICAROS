@@ -25,7 +25,11 @@ def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
     return
 
 
-def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = False):
+def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
+
+    if 'alpha'  is not in kargs.keys(): kargs['alpha'] = 0.2
+    if 'cmap'   is not in kargs.keys(): kargs['cmap']  = 'magma'
+    if 'marker' is not in kargs.keys(): kargs['marker'] = 's'
 
     rene = ut.arscale(ene)
 
@@ -34,16 +38,19 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = Fals
     fig = plt.figure(figsize=(12, 9));
     #plt.subplots(2
     ax3D = fig.add_subplot(221, projection='3d')
-    size   = scale       * (1. + 4. * rene)
+    size   = scale       * (1. + rscale * rene)
     color  = np.max(ene) * rene
-    p3d = ax3D.scatter(z, x, y, s = size, c = color, alpha = 0.2, marker='s')
+    p3d = ax3D.scatter(z, x, y, s = size, c = color, **kargs)
     ax3D.set_xlabel('z (mm)')
     ax3D.set_ylabel('x (mm)')
     ax3D.set_zlabel('y (mm)')
-    plt.title(title)
+    if chamber:
+        ax3D.set_xlim(zsize)
+        ax3D.set_ylim(xysize)
+        ax3D.set_zlim(xysize)
 
     plt.subplot(2, 2, 2)
-    plt.scatter(x, z, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.scatter(x, z, s = size, c = color, **kargs)
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('z (mm)')
@@ -52,7 +59,7 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = Fals
     plt.colorbar();
 
     plt.subplot(2, 2, 3)
-    plt.scatter(z, y, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.scatter(z, y, s = size, c = color, *kargs')
     ax = plt.gca()
     ax.set_xlabel('z (mm)')
     ax.set_ylabel('y (mm)')
@@ -61,7 +68,7 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = Fals
     plt.colorbar();
 
     plt.subplot(2, 2, 4)
-    plt.scatter(x, y, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.scatter(x, y, s = size, c = color, **kargs)
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('y (mm)')
