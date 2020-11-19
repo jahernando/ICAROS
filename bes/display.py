@@ -156,7 +156,7 @@ def wfcalib(x, y, z, erec, eraw, zstep = 2, xystep = 10.,
     #plt.gca().twinx()
     #plt.xlabel(xlabel); plt.ylabel(elabel)
     pltext.hist(wf_zcs, zbins, weights = wf_fc, stats = False);
-    plt.xlabel(xlabel); plt.ylabel(elabel + '/' + e2label)
+    plt.xlabel(zlabel); plt.ylabel(elabel + '/' + e2label)
 
     subplot(2)
 
