@@ -94,12 +94,13 @@ def wf(x, y, z, ene, zstep = 2., xystep = 10.,
        elabel = 'Energy (keV)', **kargs):
     """ Draw the x- waveform and (x, y) energy plane
     inputs:
-        x    : np.array, x-hit positions
-        y    : np.array, y-hit positions
-        z    : np.array, z-hit positions
-        erec : np.array, energy or intensity of the hits
-        step : float (2), wf-step size
-        xylabels :  tuple(str), labes of x, y, erec and eraw
+        x      : np.array, x-hit positions
+        y      : np.array, y-hit positions
+        z      : np.array, z-hit positions
+        ene    : np.array, energy or intensity of the hits
+        zstep  : float (2,), z wf-step
+        xystep : float (10.), xy pitch
+        elabel : str ('Energy KeV'), energy label
     """
 
     xlabel, ylabel, zlabel = 'x (mm)', 'y (mm)', 'z (mm)'
@@ -108,13 +109,13 @@ def wf(x, y, z, ene, zstep = 2., xystep = 10.,
     xbins = ut.arstep(z, zstep)
 
     subplot(1)
-    pltext.hist(z, xbins, weights = erec, stats = False)
+    pltext.hist(z, xbins, weights = ene, stats = False)
     plt.xlabel(zlabel); plt.ylabel(elabel)
 
 
     subplot(2)
     xybins = (ut.arstep(x, xystep), ut.arstep(y, xystep))
-    plt.hist2d(x, y, xybins, weights = erec, **kargs);
+    plt.hist2d(x, y, xybins, weights = ene, **kargs);
     plt.xlabel(xlabel); plt.ylabel(ylabel);
     cbar = plt.colorbar(); cbar.set_label(elabel)
 
@@ -127,12 +128,13 @@ def wfcalib(x, y, z, erec, eraw, zstep = 2, xystep = 10.,
             elabels = ('Energy (keV)', 'Energy (adc)'), **kargs):
     """ Draw calibration factor erec/eraw in wf and (x,y) plane
     inputs:
-        x    : np.array, x-hit positions
-        y    : np.array, y-hit positions
-        x    : np.array, z-positions
-        erec : np.array, energy or intensity of the hits
-        eraw : np.array (optional), energy raw of the hits (optional)
-        step : float (10), xy-step size
+        x        : np.array, x-hit positions
+        y        : np.array, y-hit positions
+        x        : np.array, z-positions
+        erec     : np.array, energy or intensity of the hits
+        eraw     : np.array (optional), energy raw of the hits (optional)
+        xsize    : float (2.), z-width of wf
+        xystep   : float (10), xy-step pitch
         xylabels :  tuple(str), labes of energy erec, eraw
     """
 
