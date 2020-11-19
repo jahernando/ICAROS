@@ -104,7 +104,7 @@ def wf(z, erec, eraw = None, step = 2.,
     nplots = 1 if eraw is None else 2
     subplot = pltext.canvas(nplots)
 
-    zlabel, elabel = xylabels[:2]
+    xlabel, elabel = xylabels[:2]
 
     bins = np.arange(np.min(z), np.max(z) + step, step)
 
