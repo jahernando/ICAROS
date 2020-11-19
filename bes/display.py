@@ -54,7 +54,7 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
     ax.set_ylabel('y (mm)')
     plt.colorbar();
 
-    plt.subplot(2, 2, 2)
+    plt.subplot(2, 2, 4)
     plt.scatter(x, y, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
