@@ -27,9 +27,9 @@ def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
 
 def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
 
-    if 'alpha'  is not in kargs.keys(): kargs['alpha'] = 0.2
-    if 'cmap'   is not in kargs.keys(): kargs['cmap']  = 'magma'
-    if 'marker' is not in kargs.keys(): kargs['marker'] = 's'
+    if (not 'alpha'  in kargs.keys()): kargs['alpha']  = 0.2
+    if (not 'cmap'   in kargs.keys()): kargs['cmap']   = 'magma'
+    if (not 'marker' in kargs.keys()): kargs['marker'] = 's'
 
     rene = ut.arscale(ene)
 
