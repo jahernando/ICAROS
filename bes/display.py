@@ -91,7 +91,7 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
 #--- WFs
 
 def wf(z, erec, eraw,  step = 2.,
-       xylabels = ('z (mm)', 'E (keV)', '(adc)'), **kargs):
+       xylabels = ('z (mm)', 'E (keV)', ' E (adc)'), **kargs):
     """ Draw the (e, z) wave-form
     inputs:
         z    : np.array, z-hit positions
@@ -110,7 +110,7 @@ def wf(z, erec, eraw,  step = 2.,
     subplot(1)
     pltext.hist(z, bins, weights = erec, stats = False, density = True,
                 label = elabel , **kargs)
-    pltext.hist(z, bins, weights = erec, stats = False, density = True,
+    pltext.hist(z, bins, weights = eraw, stats = False, density = True,
                 label = e2label, **kargs)
     plt.xlabel(xlabel);
 
