@@ -98,7 +98,7 @@ def wf(z, erec, eraw = None, step = 2.):
         step : float (2), wf-step size
     """
 
-    bins = ut.arstep(np.min(z), np.max(z) + step, step)
+    bins = np.arange(np.min(z), np.max(z) + step, step)
 
     pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False, label = 'rec')
     if (eraw is None): return
