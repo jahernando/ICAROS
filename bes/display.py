@@ -90,47 +90,39 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
 
 #--- WFs
 
-def wf(z, erec, eraw = None, step = 2.,
-       xylabels = ('z (mm)', 'Energy (keV)', 'Energy (adc)'), **kargs):
+def wf(z, erec, eraw,  step = 2.,
+       xylabels = ('z (mm)', 'E (keV)', '(adc)'), **kargs):
     """ Draw the (e, z) wave-form
     inputs:
         z    : np.array, z-hit positions
         erec : np.array, energy or intensity of the hits
-        eraw : np.array (optional), energy raw of the hits
+        eraw : np.array, energy raw of the hits
         step : float (2), wf-step size
         xylabels :  tuple(str), labes of x, y, erec and eraw
     """
 
-    nplots  = 1 if eraw is None else 3
-    print(nplots)
-    subplot = pltext.canvas(nplots)
+    subplot = pltext.canvas(1, 1, 6, 8)
 
-    subplot = pltext.canvas(nplots)
-    xlabel, elabel = xylabels[:2]
+    xlabel, elabel, e2label = xylabels
 
     bins = np.arange(np.min(z), np.max(z) + step, step)
 
     subplot(1)
-    pltext.hist(z, bins, weights = erec, stats = False, **kargs)
-    plt.xlabel(xlabel); plt.ylabel(elabel);
+    pltext.hist(z, bins, weights = erec, stats = False, density = True,
+                label = elabel , **kargs)
+    pltext.hist(z, bins, weights = erec, stats = False, density = True,
+                label = e2label, **kargs)
+    plt.xlabel(xlabel);
 
-    if (eraw is None): return
-
-    subplot(2)
-    e2label = xylabels[2]
-    pltext.hist(z, bins, weights = eraw, stats = False, **kargs)
-    plt.xlabel(xlabel); plt.ylabel(e2label);
-
-    subplot(3)
-    #plt.gca().twinx()
+    plt.gca().twinx()
     wf_rec, wf_zs = np.histogram(z, bins, weights = erec)
     wf_raw, wf_zs = np.histogram(z, bins, weights = eraw)
 
     wf_fc  = wf_rec/wf_raw
     wf_zcs = ut.centers(wf_zs)
 
-    plt.plot(wf_zcs, wf_fc, marker = 'o'); plt.grid();
-    plt.xlabel(xlabel); plt.ylabel(elabel + '/' + e2label)
+    plt.plot(wf_zcs, wf_fc, marker = 'o');
+    plt.ylabel(elabel + '/' + e2label)
 
     plt.tight_layout()
 
