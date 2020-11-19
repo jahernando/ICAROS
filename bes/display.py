@@ -101,7 +101,7 @@ def wf(z, erec, eraw = None, step = 2.,
         xylabels :  tuple(str), labes of x, y, erec and eraw
     """
 
-    nplots  = 1 if eraw is None else 2
+    nplots  = 1 if eraw is None else 3
     print(nplots)
     subplot = pltext.canvas(nplots)
 
@@ -121,8 +121,8 @@ def wf(z, erec, eraw = None, step = 2.,
     pltext.hist(z, bins, weights = eraw, stats = False, **kargs)
     plt.xlabel(xlabel); plt.ylabel(e2label);
 
-    subplot(1)
-    plt.gca().twinx()
+    subplot(3)
+    #plt.gca().twinx()
     wf_rec, wf_zs = np.histogram(z, bins, weights = erec)
     wf_raw, wf_zs = np.histogram(z, bins, weights = eraw)
 
@@ -132,6 +132,8 @@ def wf(z, erec, eraw = None, step = 2.,
     plt.plot(wf_zcs, wf_fc, marker = 'o'); plt.grid();
     plt.xlabel(xlabel); plt.ylabel(elabel + '/' + e2label)
 
+    plt.tight_layout()
+    
     return
 
 
