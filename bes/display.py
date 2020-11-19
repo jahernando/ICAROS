@@ -99,7 +99,7 @@ def wf(z, e, eraw = None, step = 2.):
     """
 
     bins =  ut.arstep(z, step)
-    nplots = 1 if eraw is None else 3
+    nplots = 1 if eraw is None else 2
     subplot = pltext.canvas(nplots)
 
     subplot(1)
@@ -112,7 +112,6 @@ def wf(z, e, eraw = None, step = 2.):
     pltext.hist(z, bins, weights = eraw, alpha = 0.4, stats = False,
                 lw = 2, color = 'blue')
     plt.xlabel('z (mm)'); plt.ylabel('E (adc)', c = 'blue')
-    plt.legend();
 
     subplot(2)
     pltext.hist(z, bins, weights = e/eraw, stats = False)
