@@ -165,6 +165,7 @@ def wfcalib(x, y, z, erec, eraw, zstep = 2, xystep = 10.,
     qraws, xs, ys = np.histogram2d(x, y, xybins, weights = eraw);
     fc = qrecs/qraws
     fc[np.isnan(fc)] = 0.
+    xms, yms = np.meshgrid(ut.centers(xs), ut.centers(ys))
     plt.hist2d(xms.flatten(), yms.flatten(), xybins, weights = fc.T.flatten(), **kargs);
     plt.xlabel(xlabel); plt.ylabel(ylabel);
     cbar = plt.colorbar(); cbar.set_label(elabel + '/' + e2label)
