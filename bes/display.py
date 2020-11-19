@@ -57,7 +57,7 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = Fals
     ax.set_xlabel('z (mm)')
     ax.set_ylabel('y (mm)')
     if chamber:
-        plt.xlim(zsize); plt.ylim(ysize)
+        plt.xlim(zsize); plt.ylim(xysize)
     plt.colorbar();
 
     plt.subplot(2, 2, 4)
