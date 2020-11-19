@@ -27,33 +27,33 @@ def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
 
 def event(x, y, z, ene, scale = 1., title = '', cmap = 'magma'):
 
-    rene = ut.arscale(ene, scale)
+    rene = ut.arscale(ene)
 
     fig = plt.figure(figsize=(12, 9));
     #plt.subplots(2
     ax3D = fig.add_subplot(221, projection='3d')
-    p3d = ax3D.scatter(z, x, y, s = rene, c = rene, alpha = 0.2, marker='o')
+    p3d = ax3D.scatter(z, x, y, s = scale * rene, c = rene, alpha = 0.2, marker='o')
     ax3D.set_xlabel('z (mm)')
     ax3D.set_ylabel('x (mm)')
     ax3D.set_zlabel('y (mm)')
     plt.title(title)
 
     plt.subplot(2, 2, 2)
-    plt.scatter(x, z, c = ene, s = rene, alpha = 0.2, cmap = cmap)
+    plt.scatter(x, z, c = ene, s = scale * rene, alpha = 0.2, cmap = cmap)
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('z (mm)')
     plt.colorbar();
 
     plt.subplot(2, 2, 3)
-    plt.scatter(z, y, c=ene, s= rene, alpha = 0.2, cmap = cmap)
+    plt.scatter(z, y, c=ene, s= scale * rene, alpha = 0.2, cmap = cmap)
     ax = plt.gca()
     ax.set_xlabel('z (mm)')
     ax.set_ylabel('y (mm)')
     plt.colorbar();
 
     plt.subplot(2, 2, 4)
-    plt.scatter(x, y, c=ene, s= rene, alpha = 0.2, cmap = cmap)
+    plt.scatter(x, y, c=ene, s= scale * rene, alpha = 0.2, cmap = cmap)
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('y (mm)')
