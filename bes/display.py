@@ -40,14 +40,14 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
     ax3D.set_zlabel('y (mm)')
     plt.title(title)
 
-    plt.subplot(2, 2, 3)
-    plt.scatter(z, x, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
+    plt.subplot(2, 2, 2)
+    plt.scatter(x, z, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
     ax = plt.gca()
-    ax.set_xlabel('z (mm)')
-    ax.set_ylabel('x (mm)')
+    ax.set_xlabel('x (mm)')
+    ax.set_ylabel('z (mm)')
     plt.colorbar();
 
-    plt.subplot(2, 2, 2)
+    plt.subplot(2, 2, 3)
     plt.scatter(z, y, s = size, c = color, alpha = 0.2, cmap = cmap, marker = 's')
     ax = plt.gca()
     ax.set_xlabel('z (mm)')
