@@ -88,42 +88,53 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
     plt.tight_layout()
     return
 
+#--- WFs
 
-def wf(z, erec, eraw = None, step = 2.):
+def wf(z, erec, eraw = None, step = 2.,
+       xylabels = ('z (mm)', 'Energy (keV)', 'Energy (adc)'), **kargs):
     """ Draw the (e, z) wave-form
     inputs:
         z    : np.array, z-hit positions
         erec : np.array, energy or intensity of the hits
         eraw : np.array (optional), energy raw of the hits
         step : float (2), wf-step size
+        xylabels :  tuple(str), labes of x, y, erec and eraw
     """
 
-    pltext.canvas(1, 1, 6, 8)
+    nplots = 1 if eraw is None else 2
+    subplot = pltext.canvas(nplots)
+
+    zlabel, elabel = xylabels[:2]
 
     bins = np.arange(np.min(z), np.max(z) + step, step)
 
-    pltext.hist(z, bins, weights = erec, alpha = 0.5, stats = False,
-                density = True, label = 'rec')
+    subplot(1)
+    pltext.hist(z, bins, weights = erec, stats = False, **kargs)
+    plt.xlabel(xlabel); plt.ylabel(elabel)
+
     if (eraw is None): return
 
-    pltext.hist(z, bins, weights = eraw, alpha = 0.5, stats = False,
-                density = True, label = 'raw')
-    plt.legend()
-
+    e2label = xylabels[2]
     plt.gca().twinx()
+    pltext.hist(z, bins, weights = eraw, stats = False, **kargs)
+    plt.ylabel(e2label)
+
+    subplot(2)
     wf_rec, wf_zs = np.histogram(z, bins, weights = erec)
     wf_raw, wf_zs = np.histogram(z, bins, weights = eraw)
 
     wf_fc  = wf_rec/wf_raw
     wf_zcs = ut.centers(wf_zs)
 
-    plt.plot(wf_zcs, wf_fc, color = 'red', marker = 'o');
-    plt.ylabel('factor', color = 'red')
+    plt.plot(wf_zcs, wf_fc, marker = 'o');
+    plt.xlabel(xlabel); plt.ylabel(elabel + '/' + e2label)
 
     return
 
 
-def xyspot(x, y, erec, eraw = None, step = 10., **kargs):
+def xyspot(x, y, erec, eraw = None, step = 10.,
+           xylabels = ('x (mm)', 'y (mm)', 'Energy (keV)', 'Energy (adc)'),
+           **kargs):
     """ Draw the (x, y) enery spot
     inputs:
         x    : np.array, x-hit positions
@@ -131,28 +142,41 @@ def xyspot(x, y, erec, eraw = None, step = 10., **kargs):
         erec : np.array, energy or intensity of the hits
         eraw : np.array (optional), energy raw of the hits (optional)
         step : float (10), xy-step size
+        xylabels :  tuple(str), labes of x, y, erec and eraw
     """
 
-    if (not 'cmap' in kargs.keys()): kargs['cmap'] = 'Greys'
-
-    bins = (ut.arstep(x, step), ut.arstep(y, step))
+    bins = (ut.arstep(x, 10), ut.arstep(y, 10.))
+    xlabel, ylabel, elabel = xylabels[:3]
 
     nplots = 1 if eraw is None else 3
     subplot = pltext.canvas(nplots)
 
     subplot(1)
-    plt.hist2d(x, y, bins, weights = erec, **kargs);
-    plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
-    cbar = plt.colorbar(); cbar.set_label('Energy (keV)')
+    qrecs, xs, ys = np.histogram2d(x, y, bins, weights = erec);
+    xms, yms = np.meshgrid(ut.centers(xs), ut.centers(ys))
+    plt.hist2d(xms.flatten(), yms.flatten(), bins, weights = qrecs.T.flatten(), **kargs);
+    plt.xlabel(xlabel); plt.ylabel(ylabel);
+    cbar = plt.colorbar(); cbar.set_label(elabel)
+    # is the same:
+    # plt.hist2d(x, y, bins, weights = erec);
+
+    if (nplots == 1): return
+    e2label = xylabels[3]
 
     subplot(2)
-    plt.hist2d(x, y, bins, weights = eraw, **kargs);
-    plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
-    cbar = plt.colorbar(); cbar.set_label('Energy (adc)')
+
+    qraws, xs, ys = np.histogram2d(x, y, bins, weights = eraw);
+    plt.hist2d(xms.flatten(), yms.flatten(), bins, weights = qrecs.T.flatten(), **kargs);
+    plt.xlabel(xlabel); plt.ylabel(ylabel);
+    cbar = plt.colorbar(); cbar.set_label(e2label)
+
 
     subplot(3)
-    plt.hist2d(x, y, bins, weights = e/eraw, **kargs);
-    plt.xlabel('x (mm)'); plt.ylabel('y (mm)');
-    cbar = plt.colorbar(); cbar.set_label('calibration factor (keV/adc)')
+    fc = qrecs/qraws
+    fc[np.isnan(fc)] = 0.
+    plt.hist2d(xms.flatten(), yms.flatten(), bins, weights = fc.T.flatten(), **kargs);
+    plt.xlabel(xlabel); plt.ylabel(ylabel);
+    cbar = plt.colorbar(); cbar.set_label(elabel + '/' + e2label)
 
+    plt.tight_layout()
     return
