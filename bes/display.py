@@ -25,9 +25,11 @@ def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
     return
 
 
-def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
+def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = False):
 
     rene = ut.arscale(ene)
+
+    zsize, xysize = (0., 500.), (-200., 200)
 
     fig = plt.figure(figsize=(12, 9));
     #plt.subplots(2
@@ -45,6 +47,8 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('z (mm)')
+    if chamber:
+        plt.xlim(xysize); plt.ylim(xsize)
     plt.colorbar();
 
     plt.subplot(2, 2, 3)
@@ -52,6 +56,8 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
     ax = plt.gca()
     ax.set_xlabel('z (mm)')
     ax.set_ylabel('y (mm)')
+    if chamber:
+        plt.xlim(zsize); plt.ylim(ysize)
     plt.colorbar();
 
     plt.subplot(2, 2, 4)
@@ -59,6 +65,8 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
     ax = plt.gca()
     ax.set_xlabel('x (mm)')
     ax.set_ylabel('y (mm)')
+    if chamber:
+        plt.xlim(xysize); plt.ylim(xysize)
     plt.colorbar();
     plt.tight_layout()
     return
