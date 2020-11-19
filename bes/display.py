@@ -41,7 +41,7 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma', chamber = Fals
     ax3D.set_ylabel('x (mm)')
     ax3D.set_zlabel('y (mm)')
     if chamber:
-        plt.xlim(xsize); plt.ylim(xysize); plt.zlim(xysize)
+        plt.xlim(zsize); plt.ylim(xysize); plt.zlim(xysize)
     plt.title(title)
 
     plt.subplot(2, 2, 2)
