@@ -31,7 +31,7 @@ def event(x, y, z, ene, scale = 250., title = '', cmap = 'magma'):
 
     fig = plt.figure(figsize=(12, 9));
     #plt.subplots(2
-    ax3D = fig.add_subplot(222, projection='3d')
+    ax3D = fig.add_subplot(224, projection='3d')
     size   = scale       * (1. + 2. * rene)
     color  = rene
     p3d = ax3D.scatter(z, x, y, s = size, c = color, alpha = 0.2, marker='s')
