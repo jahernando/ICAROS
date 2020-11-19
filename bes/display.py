@@ -4,6 +4,7 @@ import tables            as tb
 import matplotlib.pyplot as plt
 
 import hipy.pltext      as pltext
+import hipy.utils       as ut
 
 
 from mpl_toolkits.mplot3d    import Axes3D
@@ -11,7 +12,7 @@ from mpl_toolkits.mplot3d    import Axes3D
 
 def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
 
-    rene = arscale(ene, scale)
+    rene = ut.arscale(ene, scale)
 
     ax   = plt.subplot(111, projection = '3d')
     ax.scatter(x, y, z, c = rene, s = rene, alpha = 0.2, cmap = cmap)
@@ -26,7 +27,7 @@ def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
 
 def event(x, y, z, ene, scale = 1., title = '', cmap = 'magma'):
 
-    rene = arscale(ene, scale)
+    rene = ut.arscale(ene, scale)
 
     fig = plt.figure(figsize=(12, 9));
     #plt.subplots(2
