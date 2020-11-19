@@ -118,8 +118,7 @@ def wf(z, erec, eraw = None, step = 2.,
     subplot(2)
     e2label = xylabels[2]
     pltext.hist(z, bins, weights = eraw, stats = False, **kargs)
-    plt.xlabel(xlabel); plt.ylabel(elabel);
-
+    plt.xlabel(xlabel); plt.ylabel(e2label);
 
     subplot(3)
     #plt.gca().twinx()
