@@ -60,9 +60,9 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
         kargs['histtype'] = 'step'
 
     if (stats):
-        range   = kargs['range']   if 'range'   in kargs.keys() else None
-        formate = kargs['format']  if 'format'  in kargs.keys() else '6.2f'
-        ss = ut.str_stats(x, range = range, formate = format)
+        range   = kargs['range']    if 'range'   in kargs.keys() else None
+        formate = kargs['formate']  if 'format'  in kargs.keys() else '6.2f'
+        ss = ut.str_stats(x, range = range, formate = formate)
 
         if ('label' in kargs.keys()):
             kargs['label'] += '\n' + ss
