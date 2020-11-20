@@ -9,6 +9,16 @@ import invisible_cities.core.fit_functions as fitf
 import matplotlib.pyplot as plt
 from cycler import cycler
 
+# cmaps:
+# magma, inferno, Red, Greys, Blues, spring, summer, autumn, winter,
+# cool, Wistia, hot, jet
+
+# colorbar
+# cbar = plt.colorbar(heatmap)
+# cbar.ax.set_yticklabels(['0','1','2','>3'])
+# cbar.set_label('# of contacts', rotation=270)
+#
+
 
 """
     functions extending plt
@@ -51,8 +61,8 @@ def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
 
     if (stats):
         range   = kargs['range']   if 'range'   in kargs.keys() else None
-        formate = kargs['formate'] if 'formate' in kargs.keys() else '6.2f'
-        ss = ut.str_stats(x, range = range, formate = formate)
+        formate = kargs['format']  if 'format'  in kargs.keys() else '6.2f'
+        ss = ut.str_stats(x, range = range, formate = format)
 
         if ('label' in kargs.keys()):
             kargs['label'] += '\n' + ss
