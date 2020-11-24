@@ -188,10 +188,9 @@ def hprofile_in_sigma(x, y, nbins = 20, nsigma = 2, niter = 10, **kargs):
 
 
 
-
 #---- DATA FRAME
 
-def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
+def df_inspect(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
     """ histogram the variables of a dataframe
     inputs:
         df      : dataframe
@@ -212,7 +211,7 @@ def plt_inspect_df(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
         plt.xlabel(label);
 
 
-def corrmatrix(xdf, xlabels):
+def df_corrmatrix(xdf, xlabels):
     """ plot the correlation matrix of the selected labels from the dataframe
     inputs:
         xdf     : DataFrame
@@ -228,3 +227,28 @@ def corrmatrix(xdf, xlabels):
     cb = plt.colorbar()
     cb.ax.tick_params(labelsize=14)
     return
+
+
+def df_corrprofile(df, name, labels, switch = False):
+    """ plot the scatter and profile plot between the name-variable
+    of the df, DataFrame, vs each variable in labels list
+    inpùts:
+        df    : DataFrame
+        name  : str, name of the variable for the x-axis profile
+        labels: list(str), names of the variable sfor the y-axis profile
+        swicth: bool, False. Switch x-variable and y-variable
+    """
+
+    subplot = pltext.canvas(len(labels), len(labels))
+    for i, label in enumerate(labels):
+        subplot(i + 1)
+        xlabel, ylabel = (name, label) if switch is False else (label, name)
+        plt   .scatter (df[xlabel], df[ylabel], alpha = 0.1, c = 'grey')
+        pltext.hprofile(df[xlabel], df[ylabel])
+        plt.xlabel(xlabel, fontsize = 12); plt.ylabel(ylabel, fontsize = 12);
+    plt.tight_layout()
+    return
+
+# backward compatibility
+plt_inspect_df = df_inspect
+corrmatrix     = df_corrmatrix
