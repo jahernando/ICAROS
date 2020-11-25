@@ -247,8 +247,10 @@ def df_corrprofile(df, name, labels, switch = False, **kargs):
     for i, label in enumerate(labels):
         subplot(i + 1)
         xlabel, ylabel = (name, label) if switch is False else (label, name)
-        plt   .scatter (df[xlabel], df[ylabel], alpha = 0.1, c = 'grey')
         kargs['alpha'] = 0.1 if 'alpha' not in kargs.keys() else kargs['alpha']
+        kargs['c']     = 'grey' if 'c' not in kargs.keys() else kargs['c']
+        plt   .scatter (df[xlabel], df[ylabel], **kargs)
+        kargs['alpha'] = 1. if 'alpha' not in kargs.keys() else kargs['alpha']
         hprofile(df[xlabel], df[ylabel], **kargs)
         plt.xlabel(xlabel, fontsize = 12); plt.ylabel(ylabel, fontsize = 12);
     plt.tight_layout()
