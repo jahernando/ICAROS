@@ -233,7 +233,7 @@ def df_corrmatrix(xdf, xlabels):
     return
 
 
-def df_corrprofile(df, name, labels, switch = False):
+def df_corrprofile(df, name, labels, switch = False, **kargs):
     """ plot the scatter and profile plot between the name-variable
     of the df, DataFrame, vs each variable in labels list
     inpùts:
@@ -248,7 +248,8 @@ def df_corrprofile(df, name, labels, switch = False):
         subplot(i + 1)
         xlabel, ylabel = (name, label) if switch is False else (label, name)
         plt   .scatter (df[xlabel], df[ylabel], alpha = 0.1, c = 'grey')
-        pltext.hprofile(df[xlabel], df[ylabel])
+        kargs['alpha'] = 0.1 if 'alpha' not in kargs.keys() else kargs['alpha']
+        hprofile(df[xlabel], df[ylabel], **kargs)
         plt.xlabel(xlabel, fontsize = 12); plt.ylabel(ylabel, fontsize = 12);
     plt.tight_layout()
     return
