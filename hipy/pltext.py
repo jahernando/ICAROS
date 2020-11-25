@@ -243,7 +243,7 @@ def df_corrprofile(df, name, labels, switch = False, **kargs):
         swicth: bool, False. Switch x-variable and y-variable
     """
 
-    subplot = pltext.canvas(len(labels), len(labels))
+    subplot = canvas(len(labels), len(labels))
     for i, label in enumerate(labels):
         subplot(i + 1)
         xlabel, ylabel = (name, label) if switch is False else (label, name)
