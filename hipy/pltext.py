@@ -242,7 +242,7 @@ def df_corrprofile(df, name, labels, switch = False, **kargs):
         labels: list(str), names of the variable sfor the y-axis profile
         swicth: bool, False. Switch x-variable and y-variable
     """
-    sargs = copy(kargs)
+    sargs = dict(kargs)
 
     subplot = canvas(len(labels), len(labels))
     for i, label in enumerate(labels):
