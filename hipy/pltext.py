@@ -1,5 +1,9 @@
 import numpy as np
 import random
+
+import operator
+import functools
+
 import hipy.utils as ut
 import hipy.hfit  as hfitm
 from dataclasses import dataclass
