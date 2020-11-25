@@ -92,7 +92,8 @@ def dfh_corrections(dfh, maps, alpha = 2.76e-4):
     enum = dfh.groupby('event').apply(lambda x : np.sum(x['E'].values[np.isnan(x['Ec'])]))
 
     dz   = ddmax['Z'].values - ddmin['Z'].values
-    edz  = bes.energy_correction(ddsum['Ec'].values, dz)
+    ec   = ddsum['Ec'].values
+    edz  = bes.energy_correction(ec, dz)
 
     ddc = {'X'      : ddave['X'] .values,
            'Y'      : ddave['Y'].values,
@@ -109,6 +110,7 @@ def dfh_corrections(dfh, maps, alpha = 2.76e-4):
            #'flt_center' : ddsum['Elt_center'].values    / eraw,
            #'flt_z0' : ddsum['Elt_z0'].values / eraw,
            'fdz'    : ddsum['Edz'].values    / eraw,
+           'fdz_global'   : edz/ec,    
            'fnorma' : ddsum['Enorma'].values / eraw,
            'Enan'   : enum.values,
            'Zmin'   : ddmin['Zmin'].values,
