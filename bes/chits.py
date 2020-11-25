@@ -2,6 +2,7 @@ import numpy             as np
 import pandas            as pd
 import tables            as tb
 import matplotlib.pyplot as plt
+import bes.bes           as bes
 
 from invisible_cities.reco import corrections as cof
 
@@ -24,7 +25,7 @@ def get_maps(map_fname):
     return maps
 
 
-def dfh_corrections(dfh, maps, alpha = 2.8e-4):
+def dfh_corrections(dfh, maps, alpha = 2.76e-4):
     """ create a a DF per event with the correction factors starting from hits and maps
     """
 
@@ -90,6 +91,9 @@ def dfh_corrections(dfh, maps, alpha = 2.8e-4):
 
     enum = dfh.groupby('event').apply(lambda x : np.sum(x['E'].values[np.isnan(x['Ec'])]))
 
+    dz   = ddmax['Z'].values - ddmin['Z'].values
+    edz  = bes.energy_correction(ddsum['Ec'].values, dz)
+
     ddc = {'X'      : ddave['X'] .values,
            'Y'      : ddave['Y'].values,
            'Z'      : ddave['Z'].values,
@@ -97,6 +101,7 @@ def dfh_corrections(dfh, maps, alpha = 2.8e-4):
            'E'      : ddsum['E'].values,
            'DZ'     : ddmax['Z'].values - ddmin['Z'].values,
            'time'   : ddave['time'].values,
+           'Edz'    : edz,
            'Ecorr'  : ddsum['Ecorr'].values,
            'Echeck' : ddsum['Echeck'].values,
            'fgeo'   : ddsum['Egeo'].values   / eraw,
