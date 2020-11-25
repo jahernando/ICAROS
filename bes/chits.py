@@ -34,6 +34,7 @@ def dfh_corrections(dfh, maps):
                                'Zmin' : ddmin.Z.values})
         dfext = pd.merge(dfh, dftemp, on = 'event')
         dfext['DZ'] = dfext['Z'].values - dfext['Zmin'].values
+        dfext['R'] = np.sqrt(dfext.X**2 + dfext.Y**2)
         return dfext
 
     ## extend the DF of Hits with Zmin and DZ
@@ -104,7 +105,11 @@ def dfh_corrections(dfh, maps):
            #'flt_z0' : ddsum['Elt_z0'].values / eraw,
            'fdz'    : ddsum['Edz'].values    / eraw,
            'fnorma' : ddsum['Enorma'].values / eraw,
-           'Enan'   : enum.values}
+           'Enan'   : enum.values,
+           'Zmin'   : ddmin['Zmin'].values,
+           'Zmax'   : ddmax['Z'].values,
+           'Rmax'   : ddmax['R'].values
+           }
 
     evts = ddmin.index
 
