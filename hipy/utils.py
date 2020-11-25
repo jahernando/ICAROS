@@ -14,7 +14,7 @@ def remove_nan(vals : np.array) -> np.array:
     return vals[~np.isnan(vals)]
 
 
-def in_range(vals : np.array, range : tuple = None) -> np.array(bool):
+def in_range(vals : np.array, range : tuple = None, upper_limit_in = False) -> np.array(bool):
     """ returns a np.array(bool) with the elements of val that are in range
     inputs:
         vals : np.array
@@ -23,8 +23,9 @@ def in_range(vals : np.array, range : tuple = None) -> np.array(bool):
         np.array(bool) where True/False indicates if the elements of vals is in rage
     """
     if (range is None): return vals >= np.min(vals)
-    sel = (vals >= range[0]) & (vals < range[1])
-    return sel
+    sel1 = (vals >= range[0])
+    sel2 = (vals <= range[1]) if upper_limit_in else (vals < range[1])
+    return sel1 & sel2
 
 def centers(xs : np.array) -> np.array:
     """ returns the center between the participn

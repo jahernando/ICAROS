@@ -156,11 +156,11 @@ class Selections:
         return s
 
 
-    def set_range(self, name, range = None, varname = None):
+    def set_range(self, name, range = None, varname = None, upper_limit_in = False):
 
         varname = varname if varname is not None else name.split('.')[0]
 
-        sel = ut.in_range(self.df[varname], range)
+        sel = ut.in_range(self.df[varname], range, upper_limit_in)
 
         ss = str(varname) + ' [' + str(range[0]) + ', ' + str(range[1])+ ']'
 
