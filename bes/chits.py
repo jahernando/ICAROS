@@ -93,7 +93,7 @@ def dfh_corrections(dfh, maps, alpha = 2.76e-4):
 
     dz   = ddmax['Z'].values - ddmin['Z'].values
     ec   = ddsum['Ec'].values
-    edz  = bes.energy_correction(ec, dz)
+    edz  = bes.energy_correction(ec, dz, alpha)
 
     ddc = {'X'      : ddave['X'] .values,
            'Y'      : ddave['Y'].values,
@@ -110,7 +110,7 @@ def dfh_corrections(dfh, maps, alpha = 2.76e-4):
            #'flt_center' : ddsum['Elt_center'].values    / eraw,
            #'flt_z0' : ddsum['Elt_z0'].values / eraw,
            'fdz'    : ddsum['Edz'].values    / eraw,
-           'fdz_global'   : edz/ec,    
+           'fdz_global'   : edz/ec,
            'fnorma' : ddsum['Enorma'].values / eraw,
            'Enan'   : enum.values,
            'Zmin'   : ddmin['Zmin'].values,
