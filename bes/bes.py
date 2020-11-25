@@ -10,13 +10,13 @@ import hipy.utils as ut
 to_df = pd.DataFrame.from_records
 
 
-def energy_correction(energy, dz, a = 2.76e-4):
+def energy_correction(energy, dz, alpha = 2.76e-4):
     """ Apply Josh's energy correction by delta-z effect
     """
-    return energy/(1 - a * dz)
+    return energy/(1 - alpha * dz)
 
 
-def load_dfs(filename):
+def load_esmeralda_dfs(filename):
     """ load DF from esmeralda:
     input:
         filename: str, complete filename
@@ -38,7 +38,7 @@ def load_dfs(filename):
     return dfe, dfs, dft
 
 
-def get_dft(filenames):
+def get_esmeralda_dft(filenames):
     """ return the track DF from Esmeralda filenames
     inputs:
         filenames: tup(str), list of complete Esmeralda's filenames
@@ -52,18 +52,18 @@ def get_dft(filenames):
 
         print('data filename: ', filename)
 
-        idfe, idfs, idft = load_dfs(filename)
+        idfe, idfs, idft = load_esmeralda_dfs(filename)
 
         dft = idft if i == 0 else dft.append(idft, ignore_index = True)
 
     return dft
 
-def get_df_zeffect(filename):
+def get_esmeralda_dfcomposite(filename):
 
-    dfe, dfs, dft = load_dfs(filename)
+    dfe, dfs, dft = load_esmeralda_dfs(filename)
 
     dfe_section = dfe[['event', 'time', 'nS2', 'S1e', 'S2e', 'S2q', 'Nsipm']]
-    dfs_section = dfs[['event', 'evt_energy', 'evt_ntrks', 'evt_nhits']]
+    dfs_section = dfs[['event', 'evt_energy', 'evt_ntrks', 'evt_nhits', 'evt_out_of_map']]
     dft_section = dft[['event', 'trackID', 'energy', 'length', 'numb_of_voxels',
                        'numb_of_hits', 'numb_of_tracks',
                        'x_min', 'y_min', 'z_min', 'r_min', 'x_max', 'y_max', 'z_max', 'r_max',
@@ -81,7 +81,7 @@ def get_df_zeffect(filename):
 
 #----  Selections
 
-def get_ranges():
+def get_dft_ranges():
 
     ranges = {}
 
