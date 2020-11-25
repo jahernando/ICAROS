@@ -24,7 +24,7 @@ def get_maps(map_fname):
     return maps
 
 
-def dfh_corrections(dfh, maps):
+def dfh_corrections(dfh, maps, alpha = 2.8e-4):
     """ create a a DF per event with the correction factors starting from hits and maps
     """
 
@@ -56,7 +56,7 @@ def dfh_corrections(dfh, maps):
         get_lt_corr_fun   = cof.maps_coefficient_getter(maps.mapinfo, maps.lt)
         return cof.correct_lifetime_(dt, get_lt_corr_fun(x, y))
 
-    def corrfac_dz(dz, alpha = 2.8e-4, scale = 2.):
+    def corrfac_dz(dz, alpha = alpha, scale = 2.):
         return (1. + scale * alpha * dz)
 
 
