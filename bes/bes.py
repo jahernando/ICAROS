@@ -160,6 +160,9 @@ class Selections:
 
         varname = varname if varname is not None else name.split('.')[0]
 
+        if (range is not None) and (range[0] == range[1]):
+            upper_limit_in = True
+
         sel = ut.in_range(self.df[varname], range, upper_limit_in)
 
         ss = str(varname) + ' [' + str(range[0]) + ', ' + str(range[1])+ ']'
