@@ -249,6 +249,14 @@ def df_corrprofile(df, name, labels, switch = False):
     plt.tight_layout()
     return
 
+def df_prod(df, labels):
+    """ multiply element-wise the different colums with label in labels of the dataFrame, df
+    inputs:
+        df    :   DataFrame
+        labels: tup(str), names of the columns
+    """
+    return functools.reduce(operator.mul, [df[label] for label in labels])
+
 # backward compatibility
 plt_inspect_df = df_inspect
 corrmatrix     = df_corrmatrix
