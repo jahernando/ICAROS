@@ -243,6 +243,9 @@ def df_corrprofile(df, name, labels, switch = False, **kargs):
         swicth: bool, False. Switch x-variable and y-variable
     """
     sargs = dict(kargs)
+    if 'alpha' not in sargs.keys(): sargs['alpha'] = 0.1
+    if 'c'     not in sargs.keys(): sargs['x']     = 'grey'    
+
 
     subplot = canvas(len(labels), len(labels))
     for i, label in enumerate(labels):
