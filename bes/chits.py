@@ -95,7 +95,7 @@ def dfh_corrections(dfh, maps, alpha = 2.76e-4):
     ec   = ddsum['Ec'].values
     edz  = bes.energy_correction(ec, dz, alpha)
 
-    events = ddcmin.index.values
+    events = ddmin.index.values
 
     ddc = {'event'  : events,
            'X'      : ddave['X'] .values,
