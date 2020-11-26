@@ -238,13 +238,13 @@ def dfs_inspect(dfs, dfnames = None, labels = None, bins = 100, ranges = {}, nco
     if (labels is None):
         labels = list(dfs[0].columns)
     #print('labels : ', labels)
-    subplot = pltext.canvas(len(labels), ncolumns)
+    subplot = canvas(len(labels), ncolumns)
     for i, xlabel in enumerate(labels):
         subplot(i + 1)
         for j, df in enumerate(dfs):
             values = ut.remove_nan(df[xlabel].values)
             xrange = None if label not in ranges.keys() else ranges[xlabel]
-            pltext.hist(values, bins, range = xrange, label = dfnames[j], density = True)
+            hist(values, bins, range = xrange, label = dfnames[j], density = True)
             plt.xlabel(xlabel);
     plt.tight_layout()
     return
