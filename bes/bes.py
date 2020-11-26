@@ -96,6 +96,8 @@ def get_dfcomposite_ranges():
 
     ranges['numb_of_tracks.one']   = (0.5, 1.5)
 
+    ranges['evt_out_of_map']       = (False, False)
+
     #ranges['nS2'] = (0.5, 1.5)
 
     ranges['energy']    = (0., 3.)
