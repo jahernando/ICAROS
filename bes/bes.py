@@ -38,25 +38,25 @@ def load_esmeralda_dfs(filename):
     return dfe, dfs, dft
 
 
-def get_esmeralda_dft(filenames):
-    """ return the track DF from Esmeralda filenames
-    inputs:
-        filenames: tup(str), list of complete Esmeralda's filenames
-    returns:
-        dft: DF, track data frame
-    """
-
-    dft = None
-
-    for i, filename in enumerate(filenames):
-
-        print('data filename: ', filename)
-
-        idfe, idfs, idft = load_esmeralda_dfs(filename)
-
-        dft = idft if i == 0 else dft.append(idft, ignore_index = True)
-
-    return dft
+# def get_esmeralda_dft(filenames):
+#     """ return the track DF from Esmeralda filenames
+#     inputs:
+#         filenames: tup(str), list of complete Esmeralda's filenames
+#     returns:
+#         dft: DF, track data frame
+#     """
+#
+#     dft = None
+#
+#     for i, filename in enumerate(filenames):
+#
+#         print('data filename: ', filename)
+#
+#         idfe, idfs, idft = load_esmeralda_dfs(filename)
+#
+#         dft = idft if i == 0 else dft.append(idft, ignore_index = True)
+#
+#     return dft
 
 def get_esmeralda_dfcomposite(filename):
 
@@ -78,6 +78,15 @@ def get_esmeralda_dfcomposite(filename):
     dd = pd.merge(dd         , dfs_section, on = 'event')
 
     return dd
+
+
+def df_concat(dfs, runs = None, label = 'run'):
+
+    runs = runs if runs is None else range(len(dfs))
+    for i, df in enumerate(dfs):
+        df[label] = runs[i]
+
+    return pd.concat(dfss, ignore_index = True)
 
 #----  Selections
 
