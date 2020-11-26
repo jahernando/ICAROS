@@ -90,7 +90,7 @@ def df_concat(dfs, runs = None, label = 'run'):
 
 #----  Selections
 
-def get_dft_ranges():
+def get_dfcomposite_ranges():
 
     ranges = {}
 
