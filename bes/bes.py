@@ -162,7 +162,7 @@ def get_selections_dfcomposite(df):
 
     selections.logical_and(('fidutial', 'energy.cs'), 'fidutial.cs')
     selections.logical_and(('fidutial', 'energy.ds'), 'fidutial.ds')
-    selections.logical_and(('fidutial', 'energy.ph'), 'fidutial.ps')
+    selections.logical_and(('fidutial', 'energy.ph'), 'fidutial.ph')
 
     return selections, ranges
 
