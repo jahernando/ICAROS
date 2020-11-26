@@ -96,8 +96,8 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 1000000000):
     run    = len(labels) == 2
 
     label  = labels[0]
-    a    = df     [label].values
-    aref = df_ref [label].values
+    a    = np.array(df     [label].values)
+    aref = np.array(df_ref [label].values)
 
     if (run):
 
@@ -105,8 +105,8 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 1000000000):
             print(np.max(a), np.max(aref))
 
         label  = labels[1]
-        a     += offset * df    [label].values
-        aref  += offset * df_ref[label].values
+        a     +=  offset * df    [label].values
+        aref  +=  offset * df_ref[label].values
 
     oks  = np.isin(a, aref)
     return oks, a, aref
