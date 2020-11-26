@@ -243,7 +243,7 @@ def dfs_inspect(dfs, dfnames = None, labels = None, bins = 100, ranges = {}, nco
         subplot(i + 1)
         for j, df in enumerate(dfs):
             values = ut.remove_nan(df[xlabel].values)
-            xrange = None if label not in ranges.keys() else ranges[xlabel]
+            xrange = None if xlabel not in ranges.keys() else ranges[xlabel]
             hist(values, bins, range = xrange, label = dfnames[j], density = True)
             plt.xlabel(xlabel);
     plt.tight_layout()
