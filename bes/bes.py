@@ -101,15 +101,14 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 1000000000):
 
     if (run):
 
-        if (max(np.max(a), np.max(aref)) >= offset):
-            print(np.max(a), np.max(aref))
-
+        assert (max(np.max(a), np.max(aref)) < offset):
+        
         label  = labels[1]
         a     +=  offset * df    [label].values
         aref  +=  offset * df_ref[label].values
 
     oks  = np.isin(a, aref)
-    return oks
+    return oks, a, aref
 
 
 
