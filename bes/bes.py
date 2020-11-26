@@ -109,7 +109,7 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 1000000000):
         aref  +=  offset * df_ref[label].values
 
     oks  = np.isin(a, aref)
-    return oks, a, aref
+    return oks
 
 
 
