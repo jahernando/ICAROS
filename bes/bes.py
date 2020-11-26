@@ -152,7 +152,7 @@ def get_ranges_dfomposite():
     return ranges
 
 
-def get_selections_dfcomposite(df)
+def get_selections_dfcomposite(df):
 
     ranges = get_ranges_dfcomposite()
 
