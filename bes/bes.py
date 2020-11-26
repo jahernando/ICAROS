@@ -89,7 +89,7 @@ def df_concat(dfs, runs = None, label = 'run'):
     return pd.concat(dfs, ignore_index = True)
 
 
-def df_isin(df, df_ref, labels = ['event', 'run'], offset = 1000000000):
+def df_isin(df, df_ref, labels = ['event', 'run'], offset = 10000000):
 
     assert len(labels) <= 2
 
@@ -103,12 +103,12 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 1000000000):
 
         assert (max(np.max(a), np.max(aref)) < offset)
 
-        label  = labels[1]
-        a     +=  offset * df    [label].values
-        aref  +=  offset * df_ref[label].values
+        label1  = labels[1]
+        a       = a     + offset * df    [label1].values
+        aref    = aref  + offset * df_ref[label1].values
 
     oks  = np.isin(a, aref)
-    return oks, a, aref
+    return oks
 
 
 
