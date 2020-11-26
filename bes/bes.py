@@ -10,6 +10,13 @@ import hipy.utils as ut
 to_df = pd.DataFrame.from_records
 
 
+def get_esmeralda_filename(run_number):
+    datadir    = f"/data_extra2/jrenner/analysis/NEW"
+    run_number = str(run_number)
+    filename   = datadir + f'/{run_number}' + f'/hdf5/cdst/trigger2/cdst_combined_{run_number}' + '.h5'
+    return filename
+
+
 def energy_correction(energy, dz, alpha = 2.76e-4):
     """ Apply Josh's energy correction by delta-z effect
     """
@@ -114,7 +121,7 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 10000000):
 
 #----  Selections
 
-def get_dfcomposite_ranges():
+def get_ranges_dfomposite():
 
     ranges = {}
 
@@ -143,6 +150,23 @@ def get_dfcomposite_ranges():
     ranges['dz_track.ph'] = (35., 130.)
 
     return ranges
+
+
+def get_selections_dfcomposite(df)
+
+    ranges = get_ranges_dfcomposite()
+
+    selections = Selections(df, ranges)
+
+    selections.logical_and(('evt_out_of_map.False', 'numb_of_tracks.one', 'energy',
+                            'z_min', 'z_max', 'r_max'), 'fidutial')
+
+    selections.logical_and(('fidutial', 'energy.cs'), 'fidutial.cs')
+    selections.logical_and(('fidutial', 'energy.ds'), 'fidutial.ds')
+    selections.logical_and(('fidutial', 'energy.ph'), 'fidutial.ps')
+
+    retunr selections
+
 
 class Selections:
     """ dictorinay to hold selection (np.array(bool)) with some extendions:
