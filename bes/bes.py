@@ -154,8 +154,7 @@ def get_ranges_dfomposite():
 
 def get_selections_dfcomposite(df):
 
-    ranges = get_ranges_dfcomposite()
-
+    ranges     = get_ranges_dfcomposite()
     selections = Selections(df, ranges)
 
     selections.logical_and(('evt_out_of_map.False', 'numb_of_tracks.one', 'energy',
@@ -165,7 +164,7 @@ def get_selections_dfcomposite(df):
     selections.logical_and(('fidutial', 'energy.ds'), 'fidutial.ds')
     selections.logical_and(('fidutial', 'energy.ph'), 'fidutial.ps')
 
-    retunr selections
+    return selections, ranges
 
 
 class Selections:
