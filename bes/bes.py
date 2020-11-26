@@ -88,6 +88,30 @@ def df_concat(dfs, runs = None, label = 'run'):
 
     return pd.concat(dfs, ignore_index = True)
 
+
+def df_isin(df, df_ref, labels = ['event', 'run'], n0 = 100000000):
+
+    assert len(labels) <= 2
+
+    run    = len(labels) == 2
+
+    label  = labels[0]
+    a    = df     [label].values
+    aref = df_ref [label].values
+
+    if (run):
+
+        assert max(np.max(a), np.max(aref)) < n0
+
+        label  = labels[1]
+        a     += df    [label].values * n0
+        aref  += df_ref[label].values * n0
+
+    oks  = np.isin(a, aref)
+    return oks
+
+
+
 #----  Selections
 
 def get_dfcomposite_ranges():
