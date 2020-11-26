@@ -191,6 +191,15 @@ class Selections:
         return s
 
 
+    def set_isin(self, dfref, name = 'isin',
+                 labels = ['event', 'run'], offset = 10000000):
+
+        oks = df_isin(self.df, dfref, labels = labels, offset = offset)
+
+        self.sels[name] = Selections._sel(sel, name)
+
+        return self[name]
+
     def set_range(self, name, range = None, varname = None, upper_limit_in = False):
 
         varname = varname if varname is not None else name.split('.')[0]
