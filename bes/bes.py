@@ -165,7 +165,8 @@ class Selections:
 
         sel = ut.in_range(self.df[varname], range, upper_limit_in)
 
-        ss = str(varname) + ' [' + str(range[0]) + ', ' + str(range[1])+ ']'
+        ss = str(varname) + ' [' + str(range[0]) + ', ' + str(range[1])+ ')'
+        if (upper_limit_in) ss[-1] = ']'
 
         self.sels[name] = Selections._sel(sel, ss)
 
