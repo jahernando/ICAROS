@@ -36,6 +36,12 @@ def style():
     plt.style.context('seaborn-colorblind')
     return
 
+def plt_text(comment, x0 = 0.05, y0 = 0.7):
+    """ plot a text comment in the local frame of the last axis
+    """
+    props = dict(boxstyle='square', facecolor='white', alpha= 0.5)
+    plt.text(x0, y0, comment, transform = plt.gca().transAxes, bbox = props)
+
 
 def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> callable:
     """ create a canvas with ns subplots and ny-columns,
@@ -213,7 +219,35 @@ def df_inspect(df, labels = None, bins = 100, ranges = {}, ncolumns = 2):
         xrange = None if label not in ranges.keys() else ranges[label]
         hist(values, bins, range = xrange)
         plt.xlabel(label);
+    plt.tight_layout()
+    return
 
+
+def dfs_inspect(dfs, dfnames = None, labels = None, bins = 100, ranges = {}, ncolumns = 2):
+    """ histogram the variables of a a list of dataframes
+    inputs:
+        dfs     : tuple(dataframe)
+        dfnames : tuple(str), list of the name of the dataframes.
+        labels  : tuple(str) list of variables. if None all the columns of the DF
+        bins    : int (100), number of nbins
+        ranges  : dict, range of the histogram, the key must be the column name
+        ncolumns: int (2), number of columns of the canvas
+    """
+    ndfs    = len(dfs)
+    dfnames = [str(i) for i in range(ndfs)] if dfnames is None else dfnames
+    if (labels is None):
+        labels = list(dfs[0].columns)
+    #print('labels : ', labels)
+    subplot = pltext.canvas(len(labels), ncolumns)
+    for i, xlabel in enumerate(labels):
+        subplot(i + 1)
+        for j, df in enumerate(dfs):
+            values = ut.remove_nan(df[xlabel].values)
+            xrange = None if label not in ranges.keys() else ranges[xlabel]
+            pltext.hist(values, bins, range = xrange, label = dfnames[j], density = True)
+            plt.xlabel(xlabel);
+    plt.tight_layout()
+    return
 
 def df_corrmatrix(xdf, xlabels):
     """ plot the correlation matrix of the selected labels from the dataframe
@@ -261,6 +295,7 @@ def df_corrprofile(df, name, labels, switch = False, **kargs):
         plt.xlabel(xlabel, fontsize = 12); plt.ylabel(ylabel, fontsize = 12);
     plt.tight_layout()
     return
+
 
 def df_prod(df, labels):
     """ multiply element-wise the different colums with label in labels of the dataFrame, df
