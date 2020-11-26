@@ -121,7 +121,7 @@ def df_isin(df, df_ref, labels = ['event', 'run'], offset = 10000000):
 
 #----  Selections
 
-def get_ranges_dfomposite():
+def get_ranges_dfcomposite():
 
     ranges = {}
 
