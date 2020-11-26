@@ -187,18 +187,20 @@ class Selections:
             nevt = np.sum(self[key])
             ieff = nevt/self.size
             s += key + ' : ' + self[key].info + ', '
-            s += ' entries '+ str(nevt) + ', efficiency ' + '{0:6.5f}'.format(ieff) +'\n'
+            s += str(nevt) + ', ' + '{0:6.5f}'.format(ieff) +'\n'
+            # s += ' entries '+ str(nevt) + ', efficiency ' + '{0:6.5f}'.format(ieff) +'\n'
         return s
 
 
     def set_isin(self, dfref, name = 'isin',
                  labels = ['event', 'run'], offset = 10000000):
 
-        oks = df_isin(self.df, dfref, labels = labels, offset = offset)
+        sel = df_isin(self.df, dfref, labels = labels, offset = offset)
 
         self.sels[name] = Selections._sel(sel, name)
 
         return self[name]
+
 
     def set_range(self, name, range = None, varname = None, upper_limit_in = False):
 
