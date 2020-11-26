@@ -82,11 +82,11 @@ def get_esmeralda_dfcomposite(filename):
 
 def df_concat(dfs, runs = None, label = 'run'):
 
-    runs = runs if runs is None else range(len(dfs))
+    runs = runs if runs is not None else range(len(dfs))
     for i, df in enumerate(dfs):
         df[label] = runs[i]
 
-    return pd.concat(dfss, ignore_index = True)
+    return pd.concat(dfs, ignore_index = True)
 
 #----  Selections
 
