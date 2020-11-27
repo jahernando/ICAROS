@@ -36,11 +36,12 @@ def style():
     plt.style.context('seaborn-colorblind')
     return
 
-def plt_text(comment, x0 = 0.05, y0 = 0.7):
+
+def plt_text(comment, x = 0.05, y = 0.7, **kargs):
     """ plot a text comment in the local frame of the last axis
     """
     props = dict(boxstyle='square', facecolor='white', alpha= 0.5)
-    plt.text(x0, y0, comment, transform = plt.gca().transAxes, bbox = props)
+    plt.gca().text(x, y, comment, transform = plt.gca().transAxes, bbox = props, **kargs)
 
 
 def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> callable:

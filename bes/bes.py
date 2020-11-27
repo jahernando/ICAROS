@@ -173,13 +173,11 @@ class Selections:
 
     class Sel(np.ndarray): pass
 
-
     def _sel(sel, info):
 
         csel = sel.view(Selections.Sel)
         csel.info = info
         return csel
-
 
     def __init__(self, df, ranges = None):
 
@@ -193,16 +191,13 @@ class Selections:
 
         return
 
-
     def __getitem__(self, key):
 
         return self.sels[key]
 
-
     def keys(self):
 
         return self.sels.keys()
-
 
     def __str__(self):
         s = ''
@@ -214,7 +209,6 @@ class Selections:
             # s += ' entries '+ str(nevt) + ', efficiency ' + '{0:6.5f}'.format(ieff) +'\n'
         return s
 
-
     def set_isin(self, dfref, name = 'isin',
                  labels = ['event', 'run'], offset = 10000000):
 
@@ -223,7 +217,6 @@ class Selections:
         self.sels[name] = Selections._sel(sel, name)
 
         return self[name]
-
 
     def set_range(self, name, range = None, varname = None, upper_limit_in = False):
 
@@ -241,7 +234,6 @@ class Selections:
         self.sels[name] = Selections._sel(sel, ss)
 
         return self[name]
-
 
     def logical_and(self, names, name = None):
         """ return the selection that is the logical and of the names selections
@@ -269,3 +261,21 @@ class Selections:
             self.sels[name] = csel
 
         return csel
+
+#---- analysis - plotting
+
+def str_energy_resolution(pars, upars, label = ''):
+    ss    = label + '\n' if label != '' else ''
+    ss  += r' $\sigma$ = {0:6.4f} $\pm$ {1:6.4f}'.format(abs(pars[2]), upars[2]) + '\n'
+    mu, sigma, umu, usigma = pars[1], pars[2], upars[1], upars[2]
+    R  = 235. * abs(sigma)/mu
+    uR = 235. * np.sqrt(usigma**2 + R**2 * umu**2)/mu
+    ss += r' R  = {0:6.4f} $\pm$ {1:6.4f}'.format(R, uR)+ '\n'
+    return ss
+
+
+def pfit_energy(enes, bins, **kargs):
+    pars, upars = pltext.hfit(enes, bins, 'gausline', **kargs)
+    label = kargs['label'] if 'label' in kargs.keys() else ''
+    ss = str_energy_resolution(pars, upars, label = label)
+    return ss, pars, upars
