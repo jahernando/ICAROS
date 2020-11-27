@@ -75,7 +75,7 @@ def dfh_corrections(dfh, maps, alpha = alpha):
 
     ## get correction functions using maps
     vdrift    = np.mean(maps.t_evol.dv)
-    print('drift velocity ', vdrift)
+    #print('drift velocity ', vdrift)
 
     corrfac  = cof.apply_all_correction(maps, apply_temp = True,
                                         norm_strat = cof.norm_strategy.kr)
