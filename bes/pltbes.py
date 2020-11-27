@@ -3,7 +3,7 @@ import pandas as pd
 import tables as tb
 
 import hipy.utils  as ut
-import hipy.pltext as pltex
+import hipy.pltext as pltext
 import bes.bes     as bes
 
 
