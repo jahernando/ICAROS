@@ -7,6 +7,38 @@ import bes.bes           as bes
 from invisible_cities.reco import corrections as cof
 
 
+#----- utility functions to get the DF
+
+alpha = 2.76e-4
+
+def get_chits_filename(run_number, label = 'ds_rough'):
+    datadir    = f"/home/hernando/data/NEW"
+    run_number = str(run_number)
+    filename   = datadir + f'/chits_{label}_{run_number}.h5'
+    return filename
+
+
+def get_krmap_filename(run_number):
+    map_fname = '/home/jrenner/analysis/NEW/maps/map_'+str(run_number)+'_config_NoChecks.h5'
+    return map_fname
+
+
+def get_hitsrevisited_df(runs, sample_label = 'ds', hit_type = 'CHITs.highTh', alpha = alpha):
+
+    fnames = [get_chits_filename(run, sample_label + '_rough') for run in runs]
+    dfhs   = [pd.read_hdf(fname, hit_type) for fname in fnames]
+
+    fnames = [get_krmap_filename(run) for run in runs]
+    maps   = [get_maps(fname) for fname in fnames]
+
+    ddhs   = [dfh_corrections(dfh, imap, alpha) for dfh, imap in zip(dfhs, maps)]
+
+    ddh    = bes.df_concat(ddhs, runs)
+
+    return ddh
+
+------
+
 
 def get_hits(hh, labels = ('X', 'Y', 'Z', 'DT', 'Ec', 'E', 'time'), vdrift = None):
     def _get(label):
@@ -25,7 +57,7 @@ def get_maps(map_fname):
     return maps
 
 
-def dfh_corrections(dfh, maps, alpha = 2.76e-4):
+def dfh_corrections(dfh, maps, alpha = alpha):
     """ create a a DF per event with the correction factors starting from hits and maps
     """
 
