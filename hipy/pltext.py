@@ -128,7 +128,7 @@ def hfit(x, bins, fun, guess = None, range = None,
         ss  = hfitm.str_parameters(pars, parscov, parnames, formate = formate)
         kargs['label'] = ss if 'label' not in kargs.keys() else kargs['label'] + '\n' + ss
     plt.plot(xcs, fun(xcs, *pars), **kargs);
-    plt.legend()
+    if 'label' in kargs.keys(): plt.legend()
     return pars, parscov
 
 
