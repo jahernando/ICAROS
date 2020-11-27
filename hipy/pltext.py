@@ -116,14 +116,17 @@ def hfit(x, bins, fun, guess = None, range = None,
            if fun is a predefined function, no need to add initial gess parameters
     range: tuple (None), range of the values to histogram
     parnames : tuple(str) (None), names of the parameters
+    formate  : (str or None), str-format of the parametes values in legend,
+                              if None, no parameters values in legend
     """
     fun, guess, fnames = hfitm._predefined_function(fun, guess, x)
     ys, xs, _ = hist(x, bins, range = range, stats = False, **kargs)
     pars, parscov = hfitm.hfit(x, bins, fun, guess, range)
     xcs = 0.5* (xs[1:] + xs[:-1])
     parnames = parnames if parnames is not None else fnames
-    ss  = hfitm.str_parameters(pars, parscov, parnames, formate = formate)
-    kargs['label'] = ss if 'label' not in kargs.keys() else kargs['label'] + '\n' + ss
+    if (formate is not None):
+        ss  = hfitm.str_parameters(pars, parscov, parnames, formate = formate)
+        kargs['label'] = ss if 'label' not in kargs.keys() else kargs['label'] + '\n' + ss
     plt.plot(xcs, fun(xcs, *pars), **kargs);
     plt.legend()
     return pars, parscov
