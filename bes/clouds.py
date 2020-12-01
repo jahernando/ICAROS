@@ -36,7 +36,7 @@ def to_ids(icoors, scale = 1000):
     a m-size arrpy with the xi-components
     icoor are always integer and positive indices!!
     """
-    ndim, nsize = size_coors(icoors)
+    ndim, nsize = len(icoors), len(icoors[0])
 
     #ndim  = len(icoors)
     #nsize = len(icoors[0])
