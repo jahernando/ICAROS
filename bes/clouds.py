@@ -15,6 +15,15 @@ def to_indices(cells, bins):
     icells =  [np.digitize(icell, ibin) - 1 for icell, ibin in zip(cells, bins)]
     return icells
 
+
+def to_coors(vs):
+    """ convert a list of m-size of vector of n-dim into n-dim list of coordinates eatchof m-dize (x1, x2,x)
+    """
+    ndim = len(vs[0])
+    xs = [[vi[i] for vi in vs] for i in range(ndim)]
+    return xs
+
+
 def to_vectors(vals):
     """ convert a n-list of m-size into a list of m-size of n-vectors
     """
