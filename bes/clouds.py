@@ -82,7 +82,7 @@ def get_moves(ndim):
 
 #--- clouds
 
-def clouds_potential(coors, steps, weights = None):
+def potential(coors, steps, weights = None):
     """ compute the clouds potential
     inputs:
         coors: tuple(arrays), a m-dim size list with the n-size coordinates
@@ -111,12 +111,12 @@ def clouds_potential(coors, steps, weights = None):
 
     #icoors       = [np.digitize(coors[i], bins[i]) - 1 for i in range(ndim)]
 
-    potential, edges = np.histogramdd(coors, bins, weights = weights)
+    pot, edges = np.histogramdd(coors, bins, weights = weights)
 
-    return potential, edges
+    return pot, edges
 
 
-def clouds_voxels(potential, bins):
+def voxels(potential, bins):
     """ from the potential space and the bins returns the voxels with its potential
     returns:
         xcells: tuple(array), a m-dim list of n-size arrays with the coordinats of the voxels
@@ -133,7 +133,7 @@ def clouds_voxels(potential, bins):
     return xcells, weights
 
 
-def clouds_neighbourgs(potential, bins):
+def neighbourgs(potential, bins):
     """ returns the number of neighbourgs with potential
     returns:
         xcells: tuple(array), a m-dim list of n-size arrays with the coordinats of the voxels
@@ -166,7 +166,7 @@ def clouds_neighbourgs(potential, bins):
     return xcells, counts[cells]
 
 
-def clouds_gradient(potential, bins):
+def gradient(potential, bins):
     """ returns the grandient potential within neighbourgs
     returns:
         xcells: tuple(array), a m-dim list of n-size arrays with the coordinats of the voxels
@@ -208,7 +208,7 @@ def clouds_gradient(potential, bins):
 
     return xcells, deltas, dirs
 
-def clouds_paths(cells, bins, steps, dirs):
+def paths(cells, bins, steps, dirs):
     """ from the gradiend directions (dirs) compute the paths for each voxel
     to its node:
     returns:
@@ -258,7 +258,7 @@ def clouds_paths(cells, bins, steps, dirs):
     return nn_inode, nn_ipath, paths
 
 
-def clouds_nodes(ene, nnode):
+def energy_nodes(ene, nnode):
     """ returns the energy of the nodes, from the ene, energy of the voxels, and nnode,
     index of the node of the voxel
     returns:
