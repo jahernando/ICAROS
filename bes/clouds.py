@@ -34,6 +34,39 @@ def to_ids(icoors, scale = 1000):
     return ids
 
 
+def get_moves_updown(ndim):
+
+    def u1(idim):
+        ui1 = np.zeros(ndim)
+        ui1[idim] = 1
+        return ui1.astype(int)
+    vs = []
+    for i in range(ndim):
+        vs.append(u1(i))
+        vs.append(-u1(i))
+    vs.pop(0)
+    return vs
+
+def get_moves(ndim):
+    """ returns movelments of combination of 1-unit in each direction
+    i.e for ndim =2 returns [(1, 0), (1, 1), (0, 1,) (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
+    """
+
+    u0 = np.zeros(ndim)
+    def u1(idim):
+        ui1 = np.zeros(ndim)
+        ui1[idim] = 1
+        return ui1.astype(int)
+
+    vs = (u0, u1(0), -1 * u1(0))
+    for idim in range(1, ndim):
+        us = (u0, u1(idim), -1 * u1(idim))
+        vs = [(vi + ui).astype(int) for vi in vs for ui in us]
+    vs.pop(0)
+
+    return vs
+
+
 #--- clouds
 
 def clouds_potential(coors, steps, weights = None):
@@ -210,6 +243,7 @@ def clouds_paths(cells, bins, steps, dirs):
         paths.append(ipath)
 
     return nn_inode, nn_ipath, paths
+
 
 def clouds_nodes(ene, nnode):
     """ returns the energy of the nodes, from the ene, energy of the voxels, and nnode,
