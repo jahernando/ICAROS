@@ -10,20 +10,39 @@ import hipy.utils       as ut
 from mpl_toolkits.mplot3d    import Axes3D
 
 
-def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
+def track(x, y, z, ene, scale = 10., rscale = 9., chamber = False, ax = None, **kargs):
 
-    rene = ut.arscale(ene, scale)
+    #plt.subplots(2
+    rene = np.copy(ene)/np.max(ene)
+    #ax3D = plt.gca(projection='3d')
+    ax3D = plt.gca(projection='3d') if ax is None else ax
+    size   = scale       * (1. + rscale * rene)
+    color  = np.max(ene) * rene
+    #kargs['c'] = color if 'color' not in kargs.keys() else kargs['color']
+    p3d = ax3D.scatter(z, x, y, s = size, c = color, **kargs)
+    ax3D.set_xlabel('z (mm)')
+    ax3D.set_ylabel('x (mm)')
+    ax3D.set_zlabel('y (mm)')
+    if chamber:
+        ax3D.set_xlim(zsize)
+        ax3D.set_ylim(xysize)
+        ax3D.set_zlim(xysize)
+    return ax3D
 
-    ax   = plt.subplot(111, projection = '3d')
-    ax.scatter(x, y, z, c = rene, s = rene, alpha = 0.2, cmap = cmap)
-    ax.set_xlabel('X (mm)');
-    ax.set_ylabel('Y (mm)');
-    ax.set_zlabel('Z (mm)');
-    plt.gcf().colorbar();
-    #ax.colorbar()
-
-    return
-
+# def track(x, y, z, ene, scale = 10., title = '', cmap = 'magma'):
+#
+#     rene = ut.arscale(ene, scale)
+#
+#     ax   = plt.subplot(111, projection = '3d')
+#     ax.scatter(x, y, z, c = rene, s = rene, alpha = 0.2, cmap = cmap)
+#     ax.set_xlabel('X (mm)');
+#     ax.set_ylabel('Y (mm)');
+#     ax.set_zlabel('Z (mm)');
+#     plt.gcf().colorbar();
+#     #ax.colorbar()
+#
+#     return
+#
 
 def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
     """ Draw an event with hits x, y, z, ene
@@ -50,6 +69,7 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
     ax3D = fig.add_subplot(221, projection='3d')
     size   = scale       * (1. + rscale * rene)
     color  = np.max(ene) * rene
+    kargs['c'] = color if 'color' not in kargs.keys() else kargs['color']
     p3d = ax3D.scatter(z, x, y, s = size, c = color, **kargs)
     ax3D.set_xlabel('z (mm)')
     ax3D.set_ylabel('x (mm)')

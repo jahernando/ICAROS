@@ -133,8 +133,8 @@ def voxels(potential, bins):
     return xcells, weights
 
 
-def neighbourgs(potential, bins):
-    """ returns the number of neighbourgs with potential
+def neighbours(potential, bins):
+    """ returns the number of neighbours with potential
     returns:
         xcells: tuple(array), a m-dim list of n-size arrays with the coordinats of the voxels
         counts: array a n-size array with the number of neighbourgs
