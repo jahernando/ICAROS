@@ -3,7 +3,11 @@ import pandas            as pd
 #import tables            as tb
 
 
+import hipy.utils  as ut
+
 #--- utilities
+
+arstep = ut.arstep
 
 def to_indices(cells, bins):
     """ converts the cells x,y,z positions into indices (ix, iy, iz)
