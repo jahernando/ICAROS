@@ -49,7 +49,8 @@ def arscale(x, scale = 1.):
     rx = scale * (x - xmin)/(xmax - xmin)
     return rx
 
-def arstep(x, step):
+
+def arstep(x, step, delta = False):
     """ returns an array with bins of step size from x-min to x-max (inclusive)
     inputs:
         x    : np.array
@@ -57,8 +58,19 @@ def arstep(x, step):
     returns:
         np.array with the bins with step size
     """
-    return np.arange(np.min(x), np.max(x) + step, step)
+    delta = step/2 if delta else 0.
+    return np.arange(np.min(x) - delta, np.max(x) + step + delta, step)
 
+# def arstep(x, step, delta = 0.):
+#     """ returns an array with bins of step size from x-min to x-max (inclusive)
+#     inputs:
+#         x    : np.array
+#         step : float, step-size
+#     returns:
+#         np.array with the bins with step size
+#     """
+#     return np.arange(np.min(x), np.max(x) + step, step)
+#
 
 def stats(vals : np.array, range : tuple = None):
     vals = remove_nan(vals)
