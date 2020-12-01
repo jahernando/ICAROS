@@ -131,7 +131,7 @@ def voxels(potential, bins):
     weights      = potential[cells]
 
     return xcells, weights
-
+    
 
 def neighbours(potential, bins):
     """ returns the number of neighbours with potential
