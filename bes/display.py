@@ -69,7 +69,7 @@ def event(x, y, z, ene, scale = 10., rscale = 9., chamber = False, **kargs):
     ax3D = fig.add_subplot(221, projection='3d')
     size   = scale       * (1. + rscale * rene)
     color  = np.max(ene) * rene
-    kargs['c'] = color if 'color' not in kargs.keys() else kargs['color']
+    #kargs['c'] = color if 'color' not in kargs.keys() else kargs['color']
     p3d = ax3D.scatter(z, x, y, s = size, c = color, **kargs)
     ax3D.set_xlabel('z (mm)')
     ax3D.set_ylabel('x (mm)')
