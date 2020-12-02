@@ -379,6 +379,9 @@ def nodes_links(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_
         staples_kids : tuple( (int, int)), paris of linked ID cells
     """
 
+    def _csel(vals, sel):
+        return [val[sel] for val in vals]
+
     def _node(sel):
         cells1 = _csel(cells, sel)
         enes1  = cells_ene[sel]
