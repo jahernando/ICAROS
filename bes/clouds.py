@@ -42,8 +42,10 @@ def to_ids(icoors, scale = 1000):
     icoor are always integer and positive indices!!
     """
     ndim = len(icoors)
-    if (type(icoors[0]) == int):
-        icoors = [(icoors[i],) for i in range(ndim)]
+    icoors = icoors if (type(icoors[0]) == int) else [(ix,) for ix in icoors]
+
+    #if (type(icoors[0]) == int):
+    #    icoors = [(icoors[i],) for i in range(ndim)]
 
     ndim, nsize = len(icoors), len(icoors[0])
 
