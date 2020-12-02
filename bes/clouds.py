@@ -288,13 +288,13 @@ def energy_nodes(ene, nnode):
     return enodes
 
 
-def nodes_order(cells_enode, cells_kid, cells_node):
+def nodes_order(cells_enode, cells_node, cells_kid):
     """ order the nodes by energy
     inputs:
         cells_enode: array n-size with the energy of the node in the cell node
                                   (the other cells have zero)
-        cells_kid  : array n-size with the ID of the cell
         cells_node : array n-size with the ID of the node-cell
+        cells_kid  : array n-size with the ID of the cell
     returns:
         nodes_ene  : array m-size m is the number of nodes with the energy of the nodes
         nodes_kid  ; array m-size with the ID of the node-cell
