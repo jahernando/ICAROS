@@ -316,7 +316,7 @@ def nodes_order(cells_enode, cells_node, cells_kid):
     return nodes_ene, nodes_kid, nodes_ncells
 
 
-def nodes_links(bins, cells, enes, cells_test, enes_test):
+def nodes_links_(bins, cells, enes, cells_test, enes_test):
     """ returns the cells that are links between a second set of cells, cell_test
     inputs:
         bins : tupe(array), m-dim tuple with the bins in each coordinate
@@ -364,7 +364,7 @@ def nodes_links(bins, cells, enes, cells_test, enes_test):
     return deltas, dirs
 
 
-def staples(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid):
+def nodes_links(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid):
     """ return the staples/links between nodes
     inputs:
         nodes_kid: array, k-size with the nodes cells ID
@@ -394,7 +394,7 @@ def staples(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid)
         cells1  = [cell[sel1] for cell in cells]
         for node2_kid in (nodes_kid[ inode + 1 : ]):
             sel2 = node_kid == node2_kid
-            _, xdeltas, xdirs = clouds_links(bins, *_node(sel1), *_node(sel2))
+            _, xdeltas, xdirs = nodes_links_(bins, *_node(sel1), *_node(sel2))
 
             if (np.sum(xdeltas > 0.) <= 0): continue
 
@@ -402,7 +402,7 @@ def staples(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid)
             kid1  = cells_kid[sel1][i1]
 
             loc = [(cell[i1] + xdir[i1],) for cell, xdir in zip(cells1, xdirs)]
-            hid2 = clouds.to_ids(clouds.to_indices(loc, bins))
+            hid2 = to_ids(clouds.to_indices(loc, bins))
 
             isel = np.isin(cells_hid, hid2)
             kid2 = cells_kid[isel][0]
