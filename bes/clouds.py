@@ -41,8 +41,8 @@ def to_ids(icoors, scale = 1000):
     a m-size arrpy with the xi-components
     icoor are always integer and positive indices!!
     """
-    ndim = len(icoors)
-    icoors = icoors if (type(icoors[0]) == int) else [(ix,) for ix in icoors]
+    #ndim = len(icoors)
+    #icoors = icoors if (type(icoors[0]) == int) else [(ix,) for ix in icoors]
 
     #if (type(icoors[0]) == int):
     #    icoors = [(icoors[i],) for i in range(ndim)]
@@ -56,7 +56,7 @@ def to_ids(icoors, scale = 1000):
     ids  = [np.sum([(scale**i) * icoors[i][k] for i in range(ndim)]) for k in range(nsize)]
     ids  = np.array(ids).astype(int)
 
-    if (nsize == 1): ids = ids[0]
+    #if (nsize == 1): ids = ids[0]
     return ids
 
 
@@ -254,8 +254,8 @@ def paths(cells, bins, steps, dirs):
         #  'idnext', nn_kcell[i])
 
         iloc  =  ipos[i] + idirs[i]
-        idloc = to_ids(iloc)
-        #idloc =  to_ids([(iloc[i],) for i in range(ndim)])[0]
+        #idloc = to_ids(iloc)
+        idloc =  to_ids([(iloc[i],) for i in range(ndim)])[0]
 
         isel = np.isin(idcells, idloc)
         ii = int(np.argwhere(isel))
