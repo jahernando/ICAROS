@@ -9,10 +9,11 @@ import hipy.utils  as ut
 
 arstep = ut.arstep
 
-def to_indices(cells, bins):
+def to_indices(cells, bins, dirs = None):
     """ converts the cells x,y,z positions into indices (ix, iy, iz)
     """
-    icells =  [np.digitize(icell, ibin) - 1 for icell, ibin in zip(cells, bins)]
+    xcells = cells if dirs is None else [cell + idir for cell, idir in zip(cells, dirs)]
+    icells =  [np.digitize(icell, ibin) - 1 for icell, ibin in zip(xcells, bins)]
     return icells
 
 
@@ -36,6 +37,10 @@ def to_ids(icoors, scale = 1000):
     a m-size arrpy with the xi-components
     icoor are always integer and positive indices!!
     """
+    ndim = len(icoors)
+    if (type(icoors[0]) == int):
+        icoors = [(icoors[i],) for i in range(ndim)]
+
     ndim, nsize = len(icoors), len(icoors[0])
 
     #ndim  = len(icoors)
@@ -44,6 +49,8 @@ def to_ids(icoors, scale = 1000):
 
     ids  = [np.sum([(scale**i) * icoors[i][k] for i in range(ndim)]) for k in range(nsize)]
     ids  = np.array(ids).astype(int)
+
+    id (nsize == 1): ids = ids[0]
     return ids
 
 
@@ -131,7 +138,7 @@ def voxels(potential, bins):
     weights      = potential[cells]
 
     return xcells, weights
-    
+
 
 def neighbours(potential, bins):
     """ returns the number of neighbours with potential
