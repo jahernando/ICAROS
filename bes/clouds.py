@@ -252,7 +252,8 @@ def paths(cells, bins, steps, dirs):
         #  'idnext', nn_kcell[i])
 
         iloc  =  ipos[i] + idirs[i]
-        idloc =  to_ids([(iloc[i],) for i in range(ndim)])[0]
+        idloc = to_ids(iloc)
+        #idloc =  to_ids([(iloc[i],) for i in range(ndim)])[0]
 
         isel = np.isin(idcells, idloc)
         ii = int(np.argwhere(isel))
