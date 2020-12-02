@@ -11,6 +11,10 @@ arstep = ut.arstep
 
 def to_indices(cells, bins, dirs = None):
     """ converts the cells x,y,z positions into indices (ix, iy, iz)
+    inputs:
+        cells: tuple(array) m-dim tuple with n-size arrays with the i-coordenate
+        bins : tuple(array) m-dim tuple with the bins for each i-coordinate
+        dirs : tuple(array) m-dim tuple with n-size arrays with the increase in the i-coordenate
     """
     xcells = cells if dirs is None else [cell + idir for cell, idir in zip(cells, dirs)]
     icells =  [np.digitize(icell, ibin) - 1 for icell, ibin in zip(xcells, bins)]
@@ -50,7 +54,7 @@ def to_ids(icoors, scale = 1000):
     ids  = [np.sum([(scale**i) * icoors[i][k] for i in range(ndim)]) for k in range(nsize)]
     ids  = np.array(ids).astype(int)
 
-    id (nsize == 1): ids = ids[0]
+    if (nsize == 1): ids = ids[0]
     return ids
 
 
