@@ -397,7 +397,7 @@ def nodes_links(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_
         cells1  = [cell[sel1] for cell in cells]
         for node2_kid in (nodes_kid[ inode + 1 : ]):
             sel2 = cells_node == node2_kid
-            _, xdeltas, xdirs = nodes_links_(bins, *_node(sel1), *_node(sel2))
+            xdeltas, xdirs = nodes_links_(bins, *_node(sel1), *_node(sel2))
 
             if (np.sum(xdeltas > 0.) <= 0): continue
 
