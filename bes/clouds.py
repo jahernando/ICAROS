@@ -405,7 +405,7 @@ def nodes_links(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_
             kid1  = cells_kid[sel1][i1]
 
             loc = [(cell[i1] + xdir[i1],) for cell, xdir in zip(cells1, xdirs)]
-            hid2 = to_ids(clouds.to_indices(loc, bins))
+            hid2 = to_ids(to_indices(loc, bins))
 
             isel = np.isin(cells_hid, hid2)
             kid2 = cells_kid[isel][0]
