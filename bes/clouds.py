@@ -296,9 +296,9 @@ def nodes_order(cells_enode, cells_node, cells_kid):
         cells_node : array n-size with the ID of the node-cell
         cells_kid  : array n-size with the ID of the cell
     returns:
-        nodes_ene  : array m-size m is the number of nodes with the energy of the nodes
-        nodes_kid  ; array m-size with the ID of the node-cell
-        nodes_nvoxesl: array m-size with the number of cells associated to the node
+        nodes_ene   : array m-size m is the number of nodes with the energy of the nodes
+        nodes_kid   : array m-size with the ID of the node-cell
+        nodes_ncells: array m-size with the number of cells associated to the node
     """
 
     sel = cells_enode > 0.
@@ -311,10 +311,9 @@ def nodes_order(cells_enode, cells_node, cells_kid):
     nnodes        = len(nodes)
     nodes_ene     = [node[0] for node in nodes]
     nodes_kid     = [node[1] for node in nodes]
-    nodes_nvoxels = [np.sum(cells_node == node_id) for node_id in nodes_kid]
+    nodes_ncells  = [np.sum(cells_node == node_id) for node_id in nodes_kid]
 
-    return nodes_ene, nodes_kid, nodes_nvoxels
-
+    return nodes_ene, nodes_kid, nodes_ncells
 
 
 def nodes_links(bins, cells, enes, cells_test, enes_test):
