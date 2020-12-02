@@ -362,7 +362,7 @@ def nodes_links(bins, cells, enes, cells_test, enes_test):
     deltas  = nn_potential[sel] - potential[sel]
     dirs    = to_coors(nn_dirs[sel])
 
-   return deltas, dirs
+    return deltas, dirs
 
 
 def staples(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid):
