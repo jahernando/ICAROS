@@ -371,6 +371,7 @@ def staples(xbins, xcells, xcells_enes, xcells_nodes, xcells_kids):
 
 def set_staples(cells_node, cells_lnode, cells_kid, cells_lkid, cells_lgrad):
 
+    nsize = len(cells_node)
     cells_staples = np.full(nsize, False)
     for i, inode in enumerate(nodes_kid):
         for jnode in nodes_kid[ i +1 :]:
