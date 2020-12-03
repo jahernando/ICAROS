@@ -59,7 +59,6 @@ def to_ids(icoors, scale = 1000):
     #if (nsize == 1): ids = ids[0]
     return ids
 
-
 def get_moves_updown(ndim):
 
     def u1(idim):
@@ -316,104 +315,259 @@ def nodes_order(cells_enode, cells_node, cells_kid):
     return nodes_ene, nodes_kid, nodes_ncells
 
 
-def nodes_links_(bins, cells, enes, cells_test, enes_test):
+
+def staples(xbins, xcells, xcells_enes, xcells_nodes, xcells_kids):
     """ returns the cells that are links between a second set of cells, cell_test
     inputs:
         bins : tupe(array), m-dim tuple with the bins in each coordinate
         cells: tuple(array), m-dim tuple with n-size arrays with the cells coordinates
         enes : array,        n-size array with the energy of the cells
-        cells_test: tuple(array), m-dim tuple with n'-size arrays with the second set of cells coordinates
-        ene_test  : tuple(array), n'-size array with the energy of the second set of cells
+        cells_node :
+        cells_kid  :
     returns:
-        deltas: array, n-size with the sum energy of the both linked neighbour cell
-        dirs  : tuple(array), m-dim tule with the direction of the linked cell
+        cells_link_grad : array, n-size with the gradient to the link with respect to this cell
+        cells_link_kid  : array, n-size with the id of the gradient cell to this cell
+        cells_link_node : array, n-size with the id of the linked node to this cell
     """
 
-    ndim, nsize  = len(cells), len(cells[0])
+    ndim, nsize  = len(xcells), len(xcells[0])
 
-    steps        = [ibin[1] - ibin[0] for ibin in bins]
-    centers      = [ut.centers(ibin) for ibin in bins]
+    steps        = [ibin[1] - ibin[0] for ibin in xbins]
 
-    potential, _ = np.histogramdd(cells, bins, weights = enes)
+    nodes, _     = np.histogramdd(xcells, xbins, weights = xcells_nodes)
+    potential, _ = np.histogramdd(xcells, xbins, weights = xcells_enes)
+    kids, _      = np.histogramdd(xcells, xbins, weights = xcells_kids)
+
     shape        = potential.shape
+    sel_cells    = potential > 0
 
-    sel          = potential > 0
-    shape        = potential.shape
-
-    nn_potential   = np.copy(potential)
-    nn_dirs        = np.full((*shape, ndim), 0)
+    nn_potential = np.copy(potential)
+    nn_nodes     = np.copy(nodes).astype(int)
+    nn_kids      = np.copy(kids) .astype(int)
 
     #moves = get_moves_updown(ndim)
     moves = get_moves(ndim)
 
     for move in moves:
 
-        coors_next         = [cells_test[i] + steps[i] * move[i] for i in range(ndim)]
-        potential_next, _  = np.histogramdd(coors_next, bins, weights = enes_test)
+        coors_next         = [xcells[i] + steps[i] * move[i] for i in range(ndim)]
+        potential_next, _  = np.histogramdd(coors_next, xbins, weights = xcells_enes)
+        nodes_next, _      = np.histogramdd(coors_next, xbins, weights = xcells_nodes)
+        kids_next, _       = np.histogramdd(coors_next, xbins, weights = xcells_kids)
 
-        isel                     = potential + potential_next > nn_potential
-        nn_potential[sel & isel] = potential[sel & isel] + potential_next[sel & isel]
+        sel_nodes          = nodes_next != nodes
+        sel_pot_next       = potential + potential_next > nn_potential
 
-        if (np.sum(sel & isel) > 0):
-            nn_dirs[sel & isel] = -1 * np.array(steps) * move
+        sel = (sel_cells) & (sel_nodes) & (sel_pot_next)
+        nn_potential[sel] = potential[sel] + potential_next[sel]
+        nn_nodes    [sel] = nodes_next    [sel]
+        nn_kids     [sel] = kids_next     [sel]
+
+    link_grad  = nn_potential[sel_cells] #- potential[sel_cells]
+    link_nodes = nn_nodes    [sel_cells]
+    link_kids  = nn_kids     [sel_cells]
+
+    return link_grad, link_nodes, link_kids
+
+def set_staples(cells_node, cells_lnode, cells_kid, cells_lkid, cells_lgrad):
+
+    cells_staples = np.full(nsize, False)
+    for i, inode in enumerate(nodes_kid):
+        for jnode in nodes_kid[ i +1 :]:
+            sel  = (cells_node == inode) & (cells_lnode == jnode)
+            if (np.sum(sel) >0) :
+                isel = np.argmax(cells_lgrad[sel])
+                id1  = cells_kid [sel][isel]
+                #id2  = cells_lkids[sel][isel]
+                cells_staples[id1] = True
+
+    staples = zip(cells_kid[cells_staples], cells_lkids[cells_staples])
+    staples = sorted(staples)
+
+    return staples, cells_staples
 
 
-    deltas  = nn_potential[sel] - potential[sel]
-    dirs    = to_coors(nn_dirs[sel])
-
-    return deltas, dirs
-
-
-def nodes_links(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid):
-    """ return the staples/links between nodes
+def get_path(kid, next_kid):
+    """ given a kid, a local ID and the link array next_kid return the path of
+    consecutive kids
     inputs:
-        nodes_kid: array, k-size with the nodes cells ID
-        cells    : tuple(array), m-dim tuple with n-size arrays with the cells coordinates
-        cells_ene: array, n-size array with the energy of the cells
-        bins     : tuple(array), m-dim tuple with arrays with the bing edges for each coordinate
-        cells_node : array, n-size array with the ID of the node which this cell is associated to
-        cells_kid  : array, n-size array with the ID of the cell
-        cells_hid  : array, n-size array with the global ID of the cell
-    returns:
-        staples_nodes: tuple( (int, int)), pairs of linked ID nodes
-        staples_kids : tuple( (int, int)), paris of linked ID cells
+        kid: int, local ID of the array to get the path
+        next_kid: array, n-size dimension with the associated local ID cells to a give cell ID
     """
-
-    def _csel(vals, sel):
-        return [val[sel] for val in vals]
-
-    def _node(sel):
-        cells1 = _csel(cells, sel)
-        enes1  = cells_ene[sel]
-        return cells1, enes1
+    path = []
+    while next_kid[kid] != kid:
+        path.append(kid)
+        kid = next_kid[kid]
+    path.append(kid)
+    return path
 
 
-    nnodes         = len(nodes_kid)
-    staples_nodes  = []
-    staples_kids   = []
-    #staples_lenghs = []
-    for inode, node1_kid in enumerate(nodes_kid):
-        sel1    = cells_node == node1_kid
-        cells1  = [cell[sel1] for cell in cells]
-        for node2_kid in (nodes_kid[ inode + 1 : ]):
-            sel2 = cells_node == node2_kid
-            xdeltas, xdirs = nodes_links_(bins, *_node(sel1), *_node(sel2))
+def get_staple_path(staple, next_kid):
+    path1 = get_path(staple[0], next_kid)
+    path2 = get_path(staple[1], next_kid)
+    path1.reverse()
+    path = path1 + path2
+    return path
 
-            if (np.sum(xdeltas > 0.) <= 0): continue
 
-            i1    = np.argmax(xdeltas)
-            kid1  = cells_kid[sel1][i1]
+def get_segment(cells, kids):
+    """ Fron a list of local IDs returns a segment to plot
+    inputs:
+        cells: tuple(array), m-dim tuple with n-size array with the cells' cordinates positions
+        kids: tuple(int), list of the ID to generate the segment
+    """
+    ndim = len(cells)
+    segment = [[cells[i][kid] for kid in kids] for i in range(ndim)]
+    return segment
 
-            loc = [(cell[i1] + xdir[i1],) for cell, xdir in zip(cells1, xdirs)]
-            hid2 = to_ids(to_indices(loc, bins))
 
-            isel = np.isin(cells_hid, hid2)
-            kid2 = cells_kid[isel][0]
-
-            staple_nodes = (node1_kid, node2_kid)
-            staple_kids  = (kid1, kid2)
-
-            staples_nodes.append(staple_nodes)
-            staples_kids .append(staple_kids)
-
-    return staples_nodes, staples_kids
+# def nodes_staples(bins, cells, enes, cells_test, enes_test):
+#     """ returns the cells that are links between a second set of cells, cell_test
+#     inputs:
+#         bins : tupe(array), m-dim tuple with the bins in each coordinate
+#         cells: tuple(array), m-dim tuple with n-size arrays with the cells coordinates
+#         enes : array,        n-size array with the energy of the cells
+#         cells_test: tuple(array), m-dim tuple with n'-size arrays with the second set of cells coordinates
+#         ene_test  : tuple(array), n'-size array with the energy of the second set of cells
+#     returns:
+#         deltas: array, n-size with the sum energy of the both linked neighbour cell
+#         dirs  : tuple(array), m-dim tule with the direction of the linked cell
+#     """
+#
+#     ndim, nsize  = len(cells), len(cells[0])
+#
+#     steps        = [ibin[1] - ibin[0] for ibin in bins]
+#     centers      = [ut.centers(ibin) for ibin in bins]
+#
+#     potential, _ = np.histogramdd(cells, bins, weights = enes)
+#     shape        = potential.shape
+#
+#     sel          = potential > 0
+#     shape        = potential.shape
+#
+#     nn_potential   = np.copy(potential)
+#     nn_dirs        = np.full((*shape, ndim), 0)
+#
+#     #moves = get_moves_updown(ndim)
+#     moves = get_moves(ndim)
+#
+#     for move in moves:
+#
+#         coors_next         = [cells_test[i] + steps[i] * move[i] for i in range(ndim)]
+#         potential_next, _  = np.histogramdd(coors_next, bins, weights = enes_test)
+#
+#         isel                     = potential + potential_next > nn_potential
+#         nn_potential[sel & isel] = potential[sel & isel] + potential_next[sel & isel]
+#
+#         if (np.sum(sel & isel) > 0):
+#             nn_dirs[sel & isel] = -1 * np.array(steps) * move
+#
+#
+#     deltas  = nn_potential[sel] - potential[sel]
+#     dirs    = to_coors(nn_dirs[sel])
+#
+#     return deltas, dirs
+#
+#
+#
+# def nodes_links_(bins, cells, enes, cells_test, enes_test):
+#     """ returns the cells that are links between a second set of cells, cell_test
+#     inputs:
+#         bins : tupe(array), m-dim tuple with the bins in each coordinate
+#         cells: tuple(array), m-dim tuple with n-size arrays with the cells coordinates
+#         enes : array,        n-size array with the energy of the cells
+#         cells_test: tuple(array), m-dim tuple with n'-size arrays with the second set of cells coordinates
+#         ene_test  : tuple(array), n'-size array with the energy of the second set of cells
+#     returns:
+#         deltas: array, n-size with the sum energy of the both linked neighbour cell
+#         dirs  : tuple(array), m-dim tule with the direction of the linked cell
+#     """
+#
+#     ndim, nsize  = len(cells), len(cells[0])
+#
+#     steps        = [ibin[1] - ibin[0] for ibin in bins]
+#     centers      = [ut.centers(ibin) for ibin in bins]
+#
+#     potential, _ = np.histogramdd(cells, bins, weights = enes)
+#     shape        = potential.shape
+#
+#     sel          = potential > 0
+#     shape        = potential.shape
+#
+#     nn_potential   = np.copy(potential)
+#     nn_dirs        = np.full((*shape, ndim), 0)
+#
+#     #moves = get_moves_updown(ndim)
+#     moves = get_moves(ndim)
+#
+#     for move in moves:
+#
+#         coors_next         = [cells_test[i] + steps[i] * move[i] for i in range(ndim)]
+#         potential_next, _  = np.histogramdd(coors_next, bins, weights = enes_test)
+#
+#         isel                     = potential + potential_next > nn_potential
+#         nn_potential[sel & isel] = potential[sel & isel] + potential_next[sel & isel]
+#
+#         if (np.sum(sel & isel) > 0):
+#             nn_dirs[sel & isel] = -1 * np.array(steps) * move
+#
+#
+#     deltas  = nn_potential[sel] - potential[sel]
+#     dirs    = to_coors(nn_dirs[sel])
+#
+#     return deltas, dirs
+#
+#
+# def nodes_links(nodes_kid, bins, cells, cells_ene, cells_node, cells_kid, cells_hid):
+#     """ return the staples/links between nodes
+#     inputs:
+#         nodes_kid: array, k-size with the nodes cells ID
+#         cells    : tuple(array), m-dim tuple with n-size arrays with the cells coordinates
+#         cells_ene: array, n-size array with the energy of the cells
+#         bins     : tuple(array), m-dim tuple with arrays with the bing edges for each coordinate
+#         cells_node : array, n-size array with the ID of the node which this cell is associated to
+#         cells_kid  : array, n-size array with the ID of the cell
+#         cells_hid  : array, n-size array with the global ID of the cell
+#     returns:
+#         staples_nodes: tuple( (int, int)), pairs of linked ID nodes
+#         staples_kids : tuple( (int, int)), paris of linked ID cells
+#     """
+#
+#     def _csel(vals, sel):
+#         return [val[sel] for val in vals]
+#
+#     def _node(sel):
+#         cells1 = _csel(cells, sel)
+#         enes1  = cells_ene[sel]
+#         return cells1, enes1
+#
+#
+#     nnodes         = len(nodes_kid)
+#     staples_nodes  = []
+#     staples_kids   = []
+#     #staples_lenghs = []
+#     for inode, node1_kid in enumerate(nodes_kid):
+#         sel1    = cells_node == node1_kid
+#         cells1  = [cell[sel1] for cell in cells]
+#         for node2_kid in (nodes_kid[ inode + 1 : ]):
+#             sel2 = cells_node == node2_kid
+#             xdeltas, xdirs = nodes_links_(bins, *_node(sel1), *_node(sel2))
+#
+#             if (np.sum(xdeltas > 0.) <= 0): continue
+#
+#             i1    = np.argmax(xdeltas)
+#             kid1  = cells_kid[sel1][i1]
+#
+#             loc = [(cell[i1] + xdir[i1],) for cell, xdir in zip(cells1, xdirs)]
+#             hid2 = to_ids(to_indices(loc, bins))
+#
+#             isel = np.isin(cells_hid, hid2)
+#             kid2 = cells_kid[isel][0]
+#
+#             staple_nodes = (node1_kid, node2_kid)
+#             staple_kids  = (kid1, kid2)
+#
+#             staples_nodes.append(staple_nodes)
+#             staples_kids .append(staple_kids)
+#
+#     return staples_nodes, staples_kids
