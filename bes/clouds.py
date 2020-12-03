@@ -375,13 +375,13 @@ def set_staples(cells_node, cells_lnode, cells_kid, cells_lkid, cells_lgrad):
     for i, inode in enumerate(nodes_kid):
         for jnode in nodes_kid[ i +1 :]:
             sel  = (cells_node == inode) & (cells_lnode == jnode)
-            if (np.sum(sel) >0) :
+            if (np.sum(sel) > 0) :
                 isel = np.argmax(cells_lgrad[sel])
                 id1  = cells_kid [sel][isel]
                 #id2  = cells_lkids[sel][isel]
                 cells_staples[id1] = True
 
-    staples = zip(cells_kid[cells_staples], cells_lkids[cells_staples])
+    staples = zip(cells_kid[cells_staples], cells_lkid[cells_staples])
     staples = sorted(staples)
 
     return staples, cells_staples
