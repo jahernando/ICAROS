@@ -373,6 +373,7 @@ def set_staples(cells_node, cells_lnode, cells_kid, cells_lkid, cells_lgrad):
 
     nsize = len(cells_node)
     cells_staples = np.full(nsize, False)
+    nodes_kid = set(cells_node)
     for i, inode in enumerate(nodes_kid):
         for jnode in nodes_kid[ i +1 :]:
             sel  = (cells_node == inode) & (cells_lnode == jnode)
