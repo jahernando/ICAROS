@@ -133,12 +133,12 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
 
     subplot(5, sdim) # pass (links, nodes, cloud)
     dcloud_cells(cells,     1000. * nodes , alpha = 0.01, xaxis = xaxis);
-    dcloud_nodes(cells,     1000. * enodes, marker = 'o', alpha = 0.1, xaxis = xaxis)
+    dcloud_nodes(cells,     1000. * enodes, marker = 'o', alpha = 0.2, xaxis = xaxis)
     dcloud_grad (cells, lpath, alpha = 0.1, xaxis = xaxis)
-    dcloud_nodes(cells, 5 * 1000. * epass , marker = '^', alpha = 0.8, xaxis = xaxis)
+    dcloud_nodes(cells, 5 * 1000. * epass , marker = '^', alpha = 0.9, xaxis = xaxis)
 
     subplot(6, sdim)
-    dcloud_cells   (cells, alpha = 0.01, xaxis = xaxis);
+    dcloud_cells   (cells, alpha = 0.05, xaxis = xaxis);
     dcloud_nodes   (cells, 1000. * enodes, alpha = 0.8, marker = 'o', xaxis = xaxis)
     dcloud_segments(cells, epass, epath, lpath, xaxis = xaxis)
 
