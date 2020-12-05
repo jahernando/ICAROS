@@ -10,7 +10,7 @@ import hipy.pltext       as pltext
 #import bes.bes           as bes
 import bes.clouds        as clouds
 #import bes.chits         as chits
-import bes.display       as nplay
+#import bes.display       as nplay
 
 
 #---- utils
@@ -88,7 +88,7 @@ def dcloud_segments(cells, epass, epath, lpath, xaxis = 0, **kargs):
 
     kids = list(np.argwhere(epass > 0))
     xcells   = _ocells(cells, xaxis) if xaxis != 0 else cells
-    segments = [get_segment(xcells, get_pass_path(kid, epath, lpath)) for kid in kids]
+    segments = [clouds.get_segment(xcells, clouds.get_pass_path(kid, epath, lpath)) for kid in kids]
     for segment in segments:
         #print(segment)
         plt.plot(*segment, **kargs)
@@ -98,7 +98,7 @@ def dcloud_segments(cells, epass, epath, lpath, xaxis = 0, **kargs):
 #  High Level
 #
 
-def dcloud_steps(dfclouds, ndim, xaxis = 0):
+def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
 
     cells  = _cells(dfclouds, ndim)
     enes   = dfclouds.ene.values
@@ -110,7 +110,7 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0):
 
 
     sdim = '3d' if ndim == 3 else '2d'
-    subplot = pltext.canvas(6, 2, 10, 12)
+    subplot = pltext.canvas(6, ncolumns, 10, 12)
 
     subplot(1, sdim)
     dcloud_cells(cells, 1000. * enes, alpha = 0.1, xaxis = xaxis);
