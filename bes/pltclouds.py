@@ -91,7 +91,7 @@ def dcloud_segments(cells, epass, epath, lpath, xaxis = 0, **kargs):
     segments = [clouds.get_segment(xcells, clouds.get_pass_path(kid, epath, lpath)) for kid in kids]
     for segment in segments:
         #print(segment)
-        kargs = _karg('c', 'black', kpargs)
+        kargs = _karg('c', 'black', kargs)
         plt.plot(*segment, **kargs)
 
 
