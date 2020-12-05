@@ -44,15 +44,27 @@ def plt_text(comment, x = 0.05, y = 0.7, **kargs):
     plt.gca().text(x, y, comment, transform = plt.gca().transAxes, bbox = props, **kargs)
 
 
+
 def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> callable:
     """ create a canvas with ns subplots and ny-columns,
     return a function to move to next subplot in the canvas
     """
     nx  = int(ns / ny + ns % ny)
     plt.figure(figsize = (width * ny, height * nx))
-    def subplot(iplot):
+    def subplot(iplot, dim = '2d'):
+        """ controls the subplots in a canvas
+            inputs:
+                iplot: int, index of the plot in the canvas
+                dim  : str, '3d'  in the case the plot is 3d
+            returns:
+                nx, ny: int, int (the nx, ny rows and columns of the canvas)
+        """
         assert iplot <= nx * ny
         plt.subplot(nx, ny, iplot)
+        if (dim == '3d'):
+            nn = nx * 100 +ny *10 + iplot
+            plt.gcf().add_subplot(nn, projection = dim)
+        return nx, ny
     return subplot
 
 
