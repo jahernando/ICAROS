@@ -141,7 +141,7 @@ def clouds(coors, steps, weights):
     dat['epass']        = cells_epass         # energy of the link between two cells of different nodes
     #dat['ipass']        = cells_ipass        # indeces of the links, sorted by energy (decreasing)
 
-    return np.DataFrame(dat)
+    return pd.DataFrame(dat)
 
 
 #
