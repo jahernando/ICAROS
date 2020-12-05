@@ -163,7 +163,7 @@ def clouds_size(coors, weights = None):
 
 def clouds_potential(coors, steps, weights):
 
-    ndim, _      = clouds_size(coors, weights)
+    ndim         = len(coors)
     bins         = [arstep(x, step, True) for x, step in zip(coors, steps)]
     potential, _ = np.histogramdd(coors, bins, weights = weights)
 
