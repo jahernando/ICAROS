@@ -106,6 +106,8 @@ def clouds(coors, steps, weights):
         pd: a Pandas DataFrame with a list of columns:
     """
 
+    clouds_check(coors, steps, weights)
+
     bins, cells, cells_ene, \
     cells_kid                   = clouds_potential(coors, steps, weights)
     ndim, nsize                 = clouds_size(cells, cells_ene)
@@ -147,7 +149,7 @@ def clouds(coors, steps, weights):
 #-------------------------
 
 
-def clouds_size(coors, weights = None):
+def clouds_check(coors, steps, weights):
 
     ndim  = len(coors)
     nsize = len(coors[0])
@@ -155,6 +157,17 @@ def clouds_size(coors, weights = None):
     assert len(steps)   == ndim
     for i in range(ndim): assert len(coors[i]) == nsize
 
+    assert len(weights) == nsize
+
+    return ndim, nsize
+
+
+def clouds_size(coors, weights = None):
+
+    ndim  = len(coors)
+    nsize = len(coors[0])
+
+    for i in range(ndim): assert len(coors[i]) == nsize
     if (weights is not None):
         assert len(weights) == nsize
 
