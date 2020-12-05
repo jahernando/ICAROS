@@ -113,24 +113,31 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
     sdim = '3d' if ndim == 3 else '2d'
     subplot = pltext.canvas(6, ncolumns, 10, 12)
 
-    subplot(1, sdim)
+    subplot(1, sdim) # cloud
+    dcloud_cells(cells, 1000. * enes, alpha = 0.4, xaxis = xaxis);
+    dcloud_grad(cells, epath, xaxis = xaxis)
+
+    subplot(2, sdim) # gradient (cloud)
     dcloud_cells(cells, 1000. * enes, alpha = 0.1, xaxis = xaxis);
     dcloud_grad(cells, epath, xaxis = xaxis)
 
-    subplot(2, sdim)
+    subplot(3, sdim) # nodes (grandient, cloud)
     dcloud_cells(cells, nodes, alpha = 0.1, xaxis = xaxis);
+    dcloud_grad (cells, epath, alpha = 0.2, xaxis = xaxis)
     dcloud_nodes(cells, 1000. * enodes, marker = 'o', alpha = 0.8, xaxis = xaxis)
 
-    subplot(3, sdim)
+    subplot(4, sdim) # links (nodes, cloud)
     dcloud_cells(cells, 1000. * nodes, alpha = 0.1, xaxis = xaxis);
-    dcloud_grad(cells, lpath, xaxis = xaxis)
+    dcloud_grad (cells, lpath, xaxis = xaxis)
+    dcloud_nodes(cells, 1000. * enodes, marker = 'o', alpha = 0.8, xaxis = xaxis)
 
-    subplot(4, sdim)
+    subplot(5, sdim) # pass (links, nodes, cloud)
     dcloud_cells(cells,     1000. * nodes , alpha = 0.1, xaxis = xaxis);
     dcloud_nodes(cells,     1000. * enodes, marker = 'o', alpha = 0.8, xaxis = xaxis)
+    dcloud_grad (cells, lpath, alpha = 0.3, xaxis = xaxis)
     dcloud_nodes(cells, 5 * 1000. * epass , marker = '^', alpha = 0.8, xaxis = xaxis)
 
-    subplot(5, sdim)
+    subplot(6, sdim)
     dcloud_cells   (cells, alpha = 0.05, xaxis = xaxis);
     dcloud_nodes   (cells, 1000. * enodes, alpha = 0.8, marker = 'o', xaxis = xaxis)
     dcloud_segments(cells, epass, epath, lpath, xaxis = xaxis)
