@@ -109,7 +109,7 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0):
     epass  = dfclouds.epass.values
 
 
-    sdim = '3d' if ndim == 3 selse '2d'
+    sdim = '3d' if ndim == 3 else '2d'
     subplot = pltext.canvas(6, 2, 10, 12)
 
     subplot(1, sdim)
