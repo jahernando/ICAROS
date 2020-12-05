@@ -68,6 +68,19 @@ def canvas(ns : int, ny : int = 2, height : float = 5., width : float = 6.) -> c
     return subplot
 
 
+def karg(name, value, kargs):
+    """ if a parameter is not in the key-words dictiory then its include with value
+    inputs:
+        name: str, the name of the parameter
+        value: -, the value of the parameter
+        kargs: dict{str:-}, key-words dictionary
+    returns:
+        kargs: returns the updated (if so) key-words dictionary
+    """
+    kargs[name] = value if name not in kargs.keys() else kargs[name]
+    return kargs
+
+
 def hist(x : np.array, bins : int, stats : bool = True, xylabels : tuple = None,
         grid = True, ylog = False, **kargs):
     """ decorate hist:
