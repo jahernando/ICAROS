@@ -366,7 +366,7 @@ def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
     sel         = epasses  > 0
     kpasses,  _ = sorted_by_energy(kids[sel], epasses[sel])
 
-    kstaples = [tuple((cnode[kid], cnode[lpath[kid]])) for kid in kpasses]
+    kstaples = [tuple((cnode[kid], cnode[lpaths[kid]])) for kid in kpasses]
 
     def valid_pass_(staple, nodes_in):
         nodes_ = np.array((staple[0], staple[1])).astype(int)
