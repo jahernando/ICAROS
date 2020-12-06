@@ -82,11 +82,10 @@ def dcloud_grad(cells, epath, xaxis = 0, **kargs):
     plt.quiver(*coors, *xdirs, **opts, **kargs)
 
 
-def dcloud_segments(cells, epass, epath, lpath, xaxis = 0, **kargs):
+def dcloud_segments(cells, kids, epath, lpath, xaxis = 0, **kargs):
     """ Draw the segments associated to the pass with epass > 0
     """
 
-    kids = list(np.argwhere(epass > 0))
     xcells   = _ocells(cells, xaxis) if xaxis != 0 else cells
     segments = [clouds.get_segment(xcells, clouds.get_pass_path(kid, epath, lpath)) for kid in kids]
     for segment in segments:
@@ -140,6 +139,7 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
     subplot(6, sdim)
     dcloud_cells   (cells, alpha = 0.05, xaxis = xaxis);
     dcloud_nodes   (cells, 1000. * enodes, alpha = 0.8, marker = 'o', xaxis = xaxis)
-    dcloud_segments(cells, epass, epath, lpath, xaxis = xaxis)
+    kids  = np.argwhere(epass > 0)
+    dcloud_segments(cells, kids, epath, lpath, xaxis = xaxis)
 
     return
