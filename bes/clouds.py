@@ -113,15 +113,23 @@ def clouds(coors, steps, weights):
     ndim, nsize                 = clouds_size(cells, cells_ene)
     print(' clouds size ', ndim, nsize)
     cells_neighbours            = clouds_neighbours(bins, cells, cells_ene)
-    cells_egrad, cells_epath    = clouds_gradient (bins, cells, cells_ene, cells_kid)
+    cells_egrad, cells_epath    = clouds_gradient (bins, cells, cells_ene,
+                                                   cells_kid)
     cells_node, cells_enode, \
     cells_nodesize              = clouds_nodes(cells_ene, cells_kid, cells_epath)
 
     cells_lgrad, cells_lnode, \
-    cells_lpath                 = clouds_gradient_link(bins, cells, cells_ene, cells_node, cells_kid)
+    cells_lpath                 = clouds_gradient_link(bins, cells, cells_ene,
+                                                       cells_node, cells_kid)
 
-    cells_epass, cells_ipass    = clouds_passes(cells_ene, cells_node, cells_enode, cells_lnode,
-                                                cells_kid, cells_lgrad, cells_lpath)
+    cells_epass, cells_ipass    = clouds_passes(cells_ene, cells_node,
+                                                cells_enode, cells_lnode,
+                                                cells_kid, cells_lgrad,
+                                                cells_lpath)
+
+    cells_track, _              = clouds_tracks(cells_node, cells_enode,
+                                                cells_epass, cells_lpath,
+                                                cells_kid)
 
     dat = {}
     for i in range(ndim):
@@ -139,6 +147,7 @@ def clouds(coors, steps, weights):
     dat['lpath']        = cells_lpath         # local-ID of the cells with the largest energy gradient and different node
     dat['lnode']        = cells_lnode         # local-ID of the node to which this cell is a border and it is linked to
     dat['epass']        = cells_epass         # energy of the link between two cells of different nodes
+    dat['track']        = cells_track         # ID of the most energetic cells in the track
     #dat['ipass']        = cells_ipass        # indeces of the links, sorted by energy (decreasing)
 
     return pd.DataFrame(dat)
@@ -350,6 +359,57 @@ def clouds_passes(cells_ene, cells_node, cells_enode, cells_lnode,
 
     return cells_epass, cells_ipass
 
+def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
+
+    sel         = enodes > 0
+    knodes, _   = sorted_by_energy(kids[sel], enodes[sel])
+    sel         = epasses  > 0
+    kpasses,  _ = sorted_by_energy(kids[sel], epasses[sel])
+
+    kstaples = [tuple((cnode[kid], cnode[lpath[kid]])) for kid in kpasses]
+
+    def valid_pass_(staple, nodes_in):
+        nodes_ = np.array((staple[0], staple[1])).astype(int)
+        sel    = np.isin(nodes_, nodes_in)
+        return (np.sum(sel) == 1)
+
+
+    def new_track(xnodes, xstaples):
+        nodes      = list(xnodes[1:] )
+        nodes_in   = [xnodes[0],]
+        staples    = list(xstaples)
+        staples_in = []
+        nstaples = len(staples) +1
+        while (len(staples) < nstaples):
+            nstaples = len(staples)
+            sels = [valid_pass_(staple, nodes_in) for staple in staples]
+            if (np.sum(sels) > 0):
+                staple = np.array(staples)[sels][0]
+                staples_in.append(tuple(staple))
+                ii    = sels.index(True)
+                staples.pop(ii)
+                inode1, inode2 = staple[0], staple[1]
+                for inode in [inode1, inode2]:
+                    if inode not in nodes_in:
+                        nodes_in.append(inode)
+                        nodes.remove(inode)
+        return nodes_in, staples_in, nodes, staples
+
+    def make_tracks(xnodes, xstaples, cells_node):
+        nsize = len(cells_node)
+        main_nodes  = []
+        cells_track = np.full(nsize, -1)
+        while (len(xnodes) > 0):
+            track_nodes, track_staples, xnodes, xstaples = new_track(xnodes, xstaples)
+            main_node = track_nodes[0]
+            main_nodes.append(main_node)
+            for inode in track_nodes:
+                cells_track[cells_node == inode] = main_node
+        return cells_track, main_nodes
+
+    tracks, mnodes = make_tracks(knodes, kstaples, cnode)
+
+    return tracks, mnodes
 
 #
 #   Post-cloud utils
