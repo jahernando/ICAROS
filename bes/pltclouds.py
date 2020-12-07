@@ -147,7 +147,7 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
 
 
 
-def dcloud_step_tracks(dfclouds, ndim, ncolumns = 1, xaxis = 0, **kargs):
+def dcloud_steps_tracks(dfclouds, ndim, ncolumns = 1, xaxis = 0, **kargs):
 
     cells  = get_cells(dfclouds, ndim)
     enes   = dfclouds.ene.values
