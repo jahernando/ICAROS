@@ -127,7 +127,7 @@ def clouds(coors, steps, weights):
                                                 cells_kid, cells_lgrad,
                                                 cells_lpath)
 
-    cells_track, cells_tnode\
+    cells_track, cells_tnode, \
     cells_tpass                 = clouds_tracks(cells_node, cells_enode,
                                                 cells_epass, cells_lpath,
                                                 cells_kid)
