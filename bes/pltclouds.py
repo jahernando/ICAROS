@@ -174,9 +174,10 @@ def dcloud_steps_tracks(dfclouds, ndim, ncolumns = 1, xaxis = 0, **kargs):
     dcloud_nodes   (cells, rscale * scale * epass , marker = '^', alpha = 0.9, xaxis = xaxis)
     kids  = np.argwhere(epass > 0)
     dcloud_segments(cells, kids, epath, lpath, xaxis = xaxis)
-    plt.title('path between passes')
+    plt.title('paths between passes')
 
     subplot(2, sdim)
+    plt.title('tracks')
     kidtrack = np.unique(track)
     for ii, kid in enumerate(kidtrack):
         sel  = track == kid
@@ -190,5 +191,52 @@ def dcloud_steps_tracks(dfclouds, ndim, ncolumns = 1, xaxis = 0, **kargs):
                                marker = '^',  xaxis = xaxis)
 
         dcloud_segments(cells, np.argwhere(sel), epath, lpath, xaxis = xaxis)
+
+
+    return
+
+
+def dcloud_tracks_3dviews(dfclouds, ncolumns = 2, xaxis = 0, **kargs):
+
+    ndim   = 3
+    cells  = get_cells(dfclouds, ndim)
+    enes   = dfclouds.ene.values
+    enodes = dfclouds.enode.values
+    #nodes  = dfclouds.node.values
+    epath  = dfclouds.epath.values
+    lpath  = dfclouds.lpath.values
+    epass  = dfclouds.epass.values
+
+    track  = dfclouds.track.values
+    tnode  = dfclouds.tnode.values
+    tpass  = dfclouds.tpass.values
+
+    sdim   = '3d' if ndim == 3 else '2d'
+    scale  = 1000.
+    rscale = 5.
+
+    subplot = pltext.canvas(4, ncolumns, 10, 12)
+
+    xlabels = 2 * ['x (mm)', 'y (mm)', 'z (mm)']
+
+    def _view(i, ii):
+        subplot(ii + 1, sdim)
+        plt.title('view ' + str(i))
+        kidtrack = np.unique(track)
+        for ii, kid in enumerate(kidtrack):
+            sel  = track == kid
+            dcloud_cells(_csel(cells, sel), alpha = 0.05, xaxis = i)
+            sel  = tnode == kid
+            dcloud_nodes(_csel(cells, sel), scale * enodes[sel],  alpha = 0.8,
+                               marker = 'o', xaxis = i)
+            sel  = tpass == kid
+            dcloud_nodes(_csel(cells, sel), rscale * scale * epass[sel], alpha = 0.9,
+                                   marker = '^',  xaxis = i)
+            dcloud_segments(cells, np.argwhere(sel), epath, lpath, xaxis = i)
+            ax = plt.gca()
+            ax.set_xlabel(xlabels[i]); ax.set_ylabel(xlabels[i+1]); ax.set_zlabel(xlabels[i+2])
+
+    for ii, i in enumerate([0, 2]):
+        _view(i, ii)
 
     return
