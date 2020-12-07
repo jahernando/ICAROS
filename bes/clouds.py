@@ -359,14 +359,16 @@ def clouds_passes(cells_ene, cells_node, cells_enode, cells_lnode,
 
     return cells_epass, cells_ipass
 
+
 def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
 
     sel         = enodes > 0
     knodes, _   = sorted_by_energy(kids[sel], enodes[sel])
     sel         = epasses  > 0
     kpasses,  _ = sorted_by_energy(kids[sel], epasses[sel])
+    #print('passes', kpasses, _)
 
-    kstaples = [tuple((cnode[kid], cnode[lpaths[kid]])) for kid in kpasses]
+    kstaples = [tuple((cnode[kid], cnode[lpaths[kid]], kid)) for kid in kpasses]
 
     def valid_pass_(staple, nodes_in):
         nodes_ = np.array((staple[0], staple[1])).astype(int)
@@ -379,7 +381,7 @@ def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
         nodes_in   = [xnodes[0],]
         staples    = list(xstaples)
         staples_in = []
-        nstaples = len(staples) +1
+        nstaples   = len(staples) +1
         while (len(staples) < nstaples):
             nstaples = len(staples)
             sels = [valid_pass_(staple, nodes_in) for staple in staples]
@@ -395,23 +397,86 @@ def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
                         nodes.remove(inode)
         return nodes_in, staples_in, nodes, staples
 
-    def make_tracks(xnodes, xstaples, cells_node):
-        nsize = len(cells_node)
-        main_nodes  = []
-        cells_track = np.full(nsize, -1)
-        while (len(xnodes) > 0):
-            track_nodes, track_staples, xnodes, xstaples = new_track(xnodes, xstaples)
-            main_node = track_nodes[0]
-            main_nodes.append(main_node)
-            for inode in track_nodes:
-                cells_track[cells_node == inode] = main_node
-        return cells_track, main_nodes
+    nsize       = len(cnode)
+    main_nodes  = []
+    tracks  = np.full(nsize, -1).astype(int)
+    tnodes  = np.full(nsize, -1).astype(int)
+    tpasses = np.full(nsize, -1).astype(int)
+    while (len(knodes) > 0):
+        track_nodes, track_staples, knodes, kstaples = new_track(knodes, kstaples)
+        #print('track nodes   ! ', track_nodes)
+        #print('track staples   ', track_staples)
+        main_node = track_nodes[0]
+        for inode in track_nodes:
+            tracks[cnode == inode]      = main_node
+            tnodes[inode]               = main_node
+        for staple in track_staples:
+            kid = staple[2]
+            tpasses[kid]                = main_node
+             #print('tpass ', kid)
 
-    tracks, mnodes = make_tracks(knodes, kstaples, cnode)
 
-    return tracks, mnodes
+
+    return tracks, tnodes, tpasses
+
 
 #
+#
+# def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
+#
+#     sel         = enodes > 0
+#     knodes, _   = sorted_by_energy(kids[sel], enodes[sel])
+#     sel         = epasses  > 0
+#     kpasses,  _ = sorted_by_energy(kids[sel], epasses[sel])
+#
+#     kstaples = [tuple((cnode[kid], cnode[lpaths[kid]])) for kid in kpasses]
+#
+#     def valid_pass_(staple, nodes_in):
+#         nodes_ = np.array((staple[0], staple[1])).astype(int)
+#         sel    = np.isin(nodes_, nodes_in)
+#         return (np.sum(sel) == 1)
+#
+#
+#     def new_track(xnodes, xstaples):
+#         nodes      = list(xnodes[1:] )
+#         nodes_in   = [xnodes[0],]
+#         staples    = list(xstaples)
+#         staples_in = []
+#         nstaples   = len(staples) +1
+#         while (len(staples) < nstaples):
+#             nstaples = len(staples)
+#             sels = [valid_pass_(staple, nodes_in) for staple in staples]
+#             if (np.sum(sels) > 0):
+#                 staple = np.array(staples)[sels][0]
+#                 staples_in.append(tuple(staple))
+#                 ii    = sels.index(True)
+#                 staples.pop(ii)
+#                 inode1, inode2 = staple[0], staple[1]
+#                 for inode in [inode1, inode2]:
+#                     if inode not in nodes_in:
+#                         nodes_in.append(inode)
+#                         nodes.remove(inode)
+#         return nodes_in, staples_in, nodes, staples
+#
+#     def make_tracks(xnodes, xstaples, cells_node):
+#         nsize       = len(cells_node)
+#         main_nodes  = []
+#         cells_track = np.full(nsize, -1).istype(int)
+#         cells_tnode = np.full(nsize, -1).istype(int)
+#         cells_tpass = np.full(nsize, -1).istype(int)
+#         while (len(xnodes) > 0):
+#             track_nodes, track_staples, xnodes, xstaples = new_track(xnodes, xstaples)
+#             main_node = track_nodes[0]
+#             main_nodes.append(main_node)
+#             for inode in track_nodes:
+#                 cells_track[cells_node == inode] = main_node
+#         return cells_track, main_nodes
+#
+#     tracks, mnodes = make_tracks(knodes, kstaples, cnode)
+#
+#     return tracks, mnodes
+#
+# #
 #   Post-cloud utils
 #-------------------------------
 
