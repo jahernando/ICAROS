@@ -127,7 +127,8 @@ def clouds(coors, steps, weights):
                                                 cells_kid, cells_lgrad,
                                                 cells_lpath)
 
-    cells_track, _              = clouds_tracks(cells_node, cells_enode,
+    cells_track, cells_tnode\
+    cells_tpass                 = clouds_tracks(cells_node, cells_enode,
                                                 cells_epass, cells_lpath,
                                                 cells_kid)
 
@@ -136,18 +137,24 @@ def clouds(coors, steps, weights):
         dat['x'+str(i)] = cells[i]            # positions of the cells
     dat['ene']          = cells_ene           # energy of the cells
     dat['kid']          = cells_kid           # local-ID of the cells
+
     dat['egrad']        = cells_egrad         # energy grandient of the cell
     dat['epath']        = cells_epath         # local-ID cell that has the largest energy gradient to this cell
     dat['neighbours']   = cells_neighbours    # number of neighbours cells
+
     dat['enode']        = cells_enode         # energy of the node (sum of the energies) only for node-cells
     dat['node']         = cells_node          # local-ID of the node-cell of this cell
     #dat['inode']        = cells_inode         # indices of the nodes, sorted by energy (decreasing)
     dat['sizenode']     = cells_nodesize      # number of cells in the node (only for node-cells)
+
     dat['lgrad']        = cells_lgrad         # energy gradient with cells of different nodes
     dat['lpath']        = cells_lpath         # local-ID of the cells with the largest energy gradient and different node
     dat['lnode']        = cells_lnode         # local-ID of the node to which this cell is a border and it is linked to
     dat['epass']        = cells_epass         # energy of the link between two cells of different nodes
+
     dat['track']        = cells_track         # ID of the most energetic cells in the track
+    dat['tnode']        = cells_tnode         # ID of the most energetic cell-node for nodes in the track
+    dat['tpass']        = cells_tpass         # ID of the most energetic cell-node for passes in the track
     #dat['ipass']        = cells_ipass        # indeces of the links, sorted by energy (decreasing)
 
     return pd.DataFrame(dat)
