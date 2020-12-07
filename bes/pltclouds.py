@@ -15,7 +15,7 @@ import bes.clouds        as clouds
 
 #---- utils
 
-def _cells(df, ndim):
+def get_cells(df, ndim):
     return [df['x'+str(i)].values for i in range(ndim)]
 
 
@@ -139,6 +139,7 @@ def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
     subplot(6, sdim)
     dcloud_cells   (cells, alpha = 0.05, xaxis = xaxis);
     dcloud_nodes   (cells, 1000. * enodes, alpha = 0.8, marker = 'o', xaxis = xaxis)
+    dcloud_nodes   (cells, 5 * 1000. * epass , marker = '^', alpha = 0.9, xaxis = xaxis)
     kids  = np.argwhere(epass > 0)
     dcloud_segments(cells, kids, epath, lpath, xaxis = xaxis)
 
