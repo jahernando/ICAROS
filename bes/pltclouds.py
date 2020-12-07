@@ -100,7 +100,7 @@ def dcloud_segments(cells, kids, epath, lpath, xaxis = 0, **kargs):
 
 def dcloud_steps(dfclouds, ndim, xaxis = 0, ncolumns = 1):
 
-    cells  = _cells(dfclouds, ndim)
+    cells  = get_cells(dfclouds, ndim)
     enes   = dfclouds.ene.values
     enodes = dfclouds.enode.values
     nodes  = dfclouds.node.values
