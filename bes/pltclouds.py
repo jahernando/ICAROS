@@ -181,12 +181,12 @@ def dcloud_steps_tracks(dfclouds, ndim, ncolumns = 1, xaxis = 0, **kargs):
     for ii, kid in enumerate(kidtrack):
         sel  = track == kid
         #print('kid ', kid, 'nodes', ckid[tnode == kid], ' kpass ', ckids[tpass == kid])
-        dcloud_cells(pltclouds._csel(cells, sel), alpha = 0.05, xaxis = xaxis)
+        dcloud_cells(_csel(cells, sel), alpha = 0.05, xaxis = xaxis)
         sel  = tnode == kid
-        dcloud_nodes(pltclouds._csel(cells, sel), scale * enodes[sel],  alpha = 0.8,
+        dcloud_nodes(_csel(cells, sel), scale * enodes[sel],  alpha = 0.8,
                            marker = 'o', xaxis = xaxis)
         sel  = tpass == kid
-        dcloud_nodes(pltclouds._csel(cells, sel), rscale * scale * epass[sel], alpha = 0.9,
+        dcloud_nodes(_csel(cells, sel), rscale * scale * epass[sel], alpha = 0.9,
                                marker = '^',  xaxis = xaxis)
 
         dcloud_segments(cells, np.argwhere(sel), epath, lpath, xaxis = xaxis)
