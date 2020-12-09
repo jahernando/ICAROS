@@ -3,7 +3,7 @@ import pandas            as pd
 #import tables            as tb
 
 
-import hipy.utils  as ut
+#import hipy.utils  as ut
 
 #--- utilities
 
