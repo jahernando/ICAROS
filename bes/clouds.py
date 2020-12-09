@@ -134,7 +134,7 @@ def clouds(coors, steps, weights):
 
     cells_range, cells_erange  = clouds_range(cells_tnode, cells_tpass,
                                               cells_epath, cells_lpath,
-                                              cells_kids):
+                                              cells_kids)
 
     dat = {}
     for i in range(ndim):
