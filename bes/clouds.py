@@ -16,6 +16,17 @@ def ut_centers(xs : np.array) -> np.array:
     """
     return 0.5* ( xs[1: ] + xs[: -1])
 
+def arstep(x, step, delta = False):
+    """ returns an array with bins of step size from x-min to x-max (inclusive)
+    inputs:
+        x    : np.array
+        step : float, step-size
+    returns:
+        np.array with the bins with step size
+    """
+    delta = step/2 if delta else 0.
+    return np.arange(np.min(x) - delta, np.max(x) + step + delta, step)
+
 
 #arstep = ut.arstep
 
