@@ -132,6 +132,10 @@ def clouds(coors, steps, weights):
                                                 cells_epass, cells_lpath,
                                                 cells_kid)
 
+    cells_range, cells_erange  = clouds_range(cells_tnode, cells_tpass,
+                                              cells_epath, cells_lpath,
+                                              cells_kids):
+
     dat = {}
     for i in range(ndim):
         dat['x'+str(i)] = cells[i]            # positions of the cells
@@ -156,6 +160,9 @@ def clouds(coors, steps, weights):
     dat['tnode']        = cells_tnode         # ID of the most energetic cell-node for nodes in the track
     dat['tpass']        = cells_tpass         # ID of the most energetic cell-node for passes in the track
     #dat['ipass']        = cells_ipass        # indeces of the links, sorted by energy (decreasing)
+
+    dat['range']        = cells_range         # cell-ID of the most energy cell in the range
+    dat['erange']       = cells_erange        # sum-energy of the cells that are associate to this cell-range
 
     return pd.DataFrame(dat)
 
@@ -422,10 +429,43 @@ def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
             tpasses[kid]                = main_node
              #print('tpass ', kid)
 
-
-
     return tracks, tnodes, tpasses
 
+
+def clouds_ranges(tnode, tpass, epath, lpath, ckids):
+
+    nsize  = len(tpass)
+    trange = np.full(nsize, -1).astype(int)
+
+    trange[ckids[tnode > -1]] = ckids[tnode > -1]
+
+    tracks  = np.unique(tpass[tpass > -1])
+    for track in tracks:
+        #print('track ', track)
+        kids  = ckids[tpass  == track]
+        #print('passes ', kids)
+        paths = [get_pass_path(kid, epath, lpath) for kid in kids]
+        #print('paths ', paths)
+        path  = paths[0]
+        for ipath in paths[0:]: path += ipath
+        path  = np.unique(path)
+        #print('path ', path)
+        trange[path] = track
+
+
+    erange = np.zeros(nsize)
+    tkids = ckids[trange > -1]
+    print(tkids)
+    def _irange(kid):
+        if kid in tkids: return kid
+        kid  = epath[kid]
+        return _irange(kid)
+
+    for kid in ckids:
+        erange[_irange(kid)] += enes[kid]
+
+
+    return trange, erange
 
 #
 #
