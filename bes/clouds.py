@@ -132,7 +132,8 @@ def clouds(coors, steps, weights):
                                                 cells_epass, cells_lpath,
                                                 cells_kid)
 
-    cells_range, cells_erange  = clouds_ranges(cells_tnode, cells_tpass,
+    cells_range, cells_erange  = clouds_ranges(cells_ene,
+                                               cells_tnode, cells_tpass,
                                                cells_epath, cells_lpath,
                                                cells_kid)
 
@@ -432,7 +433,7 @@ def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
     return tracks, tnodes, tpasses
 
 
-def clouds_ranges(tnode, tpass, epath, lpath, ckids):
+def clouds_ranges(enes, tnode, tpass, epath, lpath, ckids):
 
     nsize  = len(tpass)
     trange = np.full(nsize, -1).astype(int)
