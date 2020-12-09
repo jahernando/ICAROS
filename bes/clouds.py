@@ -132,7 +132,7 @@ def clouds(coors, steps, weights):
                                                 cells_epass, cells_lpath,
                                                 cells_kid)
 
-    cells_range, cells_erange  = clouds_ranges(cells_ene,
+    cells_ranger, cells_eranger = clouds_rangers(cells_ene,
                                                cells_tnode, cells_tpass,
                                                cells_epath, cells_lpath,
                                                cells_kid)
@@ -162,8 +162,8 @@ def clouds(coors, steps, weights):
     dat['tpass']        = cells_tpass         # ID of the most energetic cell-node for passes in the track
     #dat['ipass']        = cells_ipass        # indeces of the links, sorted by energy (decreasing)
 
-    dat['range']        = cells_range         # cell-ID of the most energy cell in the range
-    dat['erange']       = cells_erange        # sum-energy of the cells that are associate to this cell-range
+    dat['ranger']       = cells_ranger        # cell-ID of the most energy cell in the range
+    dat['eranger']      = cells_eranger       # sum-energy of the cells that are associate to this cell-range
 
     return pd.DataFrame(dat)
 
@@ -433,7 +433,7 @@ def clouds_tracks(cnode, enodes, epasses, lpaths, kids):
     return tracks, tnodes, tpasses
 
 
-def clouds_ranges(enes, tnode, tpass, epath, lpath, ckids):
+def clouds_rangers(enes, tnode, tpass, epath, lpath, ckids):
 
     nsize  = len(tpass)
     trange = np.full(nsize, -1).astype(int)
