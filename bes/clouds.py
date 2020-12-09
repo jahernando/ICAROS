@@ -121,7 +121,7 @@ def clouds(coors, steps, weights):
     bins, cells, cells_ene, \
     cells_kid                   = clouds_potential(coors, steps, weights)
     ndim, nsize                 = clouds_size(cells, cells_ene)
-    print(' clouds size ', ndim, nsize)
+    #print(' clouds size ', ndim, nsize)
     cells_neighbours            = clouds_neighbours(bins, cells, cells_ene)
     cells_egrad, cells_epath    = clouds_gradient (bins, cells, cells_ene,
                                                    cells_kid)
@@ -466,7 +466,7 @@ def clouds_rangers(enes, tnode, tpass, epath, lpath, ckids):
 
     erange = np.zeros(nsize)
     tkids = ckids[trange > -1]
-    print(tkids)
+    #print(tkids)
     def _irange(kid):
         if kid in tkids: return kid
         kid  = epath[kid]
