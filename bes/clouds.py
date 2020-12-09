@@ -7,7 +7,17 @@ import hipy.utils  as ut
 
 #--- utilities
 
-arstep = ut.arstep
+def ut_centers(xs : np.array) -> np.array:
+    """ returns the center between the participn
+    inputs:
+        xs: np.array
+    returns:
+        np.array with the centers of xs (dimension len(xs)-1)
+    """
+    return 0.5* ( xs[1: ] + xs[: -1])
+
+
+#arstep = ut.arstep
 
 def to_indices(cells, bins, dirs = None):
     """ converts the cells x,y,z positions into indices (ix, iy, iz)
@@ -210,7 +220,7 @@ def clouds_potential(coors, steps, weights):
     nsize        = len(enes)
     kids         = np.arange(nsize)
 
-    centers      = [ut.centers(ibin) for ibin in bins]
+    centers      = [ut_centers(ibin) for ibin in bins]
     cells        = [centers[i][icells[i]] for i in range(ndim)]
 
     return bins, cells, enes, kids.astype(int)
