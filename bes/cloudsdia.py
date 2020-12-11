@@ -57,8 +57,8 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
     ddhs   = [cloudsdia_(dfh, dfhHT, dmap, ntotal) for dfh, dfhHT, dmap in zip(dfhits, dfhitHTs, dmaps)]
 
     ddh    = bes.df_concat(ddhs, runs)
-    key = 'evt_outcells'
-    print('ddh', ddh[key])
+    #key = 'evt_outcells'
+    #print('ddh', ddh[key])
 
     return ddh
 
@@ -111,13 +111,13 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         idat = cloud_summary(dfclouds)
         for key in idat.keys():
             dat[key][n] = idat[key]
-        key = 'evt_outcells'
-        print(key, idat[key], dat[key][n])
+        #key = 'evt_outcells'
+        #print(key, idat[key], dat[key][n])
 
-    key = 'evt_outcells'
-    print('dat ', key, dat[key])
+    #key = 'evt_outcells'
+    #print('dat ', key, dat[key])
     dfdat = pd.DataFrame(dat)
-    print('dfdat', key, dfdat[key])
+    #print('dfdat', key, dfdat[key])
     return dfdat
 
 
