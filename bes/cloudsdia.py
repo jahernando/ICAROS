@@ -76,7 +76,7 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
     """ City Engine: loops in events, run clouds and makes the summary
     """
 
-    corrfac = get_coorfac(maps)
+    corrfac = get_corrfac(maps)
 
     nsize = len(dfhit.groupby('event'))
     print('size', nsize)
