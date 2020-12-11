@@ -109,6 +109,8 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         idat = cloud_summary(dfclouds)
         for key in idat.keys():
             dat[key][n] = idat[key]
+        key = 'evt_outcells'
+        print(key, idat[key], dat[key][n])
 
     return pd.DataFrame(dat)
 
