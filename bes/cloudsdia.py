@@ -57,6 +57,8 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
     ddhs   = [cloudsdia_(dfh, dfhHT, dmap, ntotal) for dfh, dfhHT, dmap in zip(dfhits, dfhitHTs, dmaps)]
 
     ddh    = bes.df_concat(ddhs, runs)
+    key = 'evt_outcells'
+    print('ddh', ddh[key])
 
     return ddh
 
