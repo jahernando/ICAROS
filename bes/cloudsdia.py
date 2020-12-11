@@ -112,13 +112,13 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         x, y, z, eraw, erec, q, times = get_hits(evtHT, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
         idat = hits_summary(x, y, z, eraw, erec, q)
         for key in idat.keys():
-            dat[key + 'HT'] = idat[key]
+            dat[key + 'HT'][n] = idat[key]
 
         # get hits info
         x, y, z, eraw, erec, q, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
         idat = hits_summary(x, y, z, eraw, erec, q)
         for key in idat.keys():
-            dat[key] = idat[key]
+            dat[key][n] = idat[key]
 
         if (n % 100 == 0):
             print('event : ', i, ', size : ', len(eraw))
