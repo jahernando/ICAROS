@@ -114,7 +114,9 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
 
     key = 'evt_outcells'
     print('dat ', key, dat[key])
-    return pd.DataFrame(dat)
+    dfdat = pd.DataFrame(dat)
+    print('dfdat', key, dfdat[key])
+    return dfdat
 
 
 def cloud_order_tracks(df):
