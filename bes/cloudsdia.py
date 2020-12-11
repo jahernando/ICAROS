@@ -7,25 +7,14 @@ from invisible_cities.reco import corrections as cof
 
 import hipy.utils        as ut
 import bes.bes           as bes
-#import bes.chits         as chits
+import bes.chits         as chits
 import clouds        as clouds
 
 
-
-def get_chits_filename(run_number, label = 'ds_rough', datadir = f"/home/hernando/data/NEW"):
-    run_number = str(run_number)
-    filename   = datadir + f'/chits_{label}_{run_number}.h5'
-    return filename
-
-
-def get_krmap_filename(run_number):
-    map_fname = '/home/jrenner/analysis/NEW/maps/map_'+str(run_number)+'_config_NoChecks.h5'
-    return map_fname
-
-
-def get_maps(map_fname):
-    maps      = cof.read_maps(map_fname)
-    return maps
+get_chits_filename = chits.get_chits_filename
+get_krmap_filename = chits.get_krmap_filename
+get_maps           = chits.get_maps
+get_hits           = chits.get_hits
 
 
 def load_data(runs, sample_label = 'ds'):
