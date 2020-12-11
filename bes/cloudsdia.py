@@ -120,8 +120,8 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
 
 
 def cloud_order_tracks(df):
-    "" returns the ids of the tracks ordered by energy
-    ""
+    """ returns the ids of the tracks ordered by energy
+    """
 
     rangers  = df.ranger .values
     erangers = df.eranger.values
