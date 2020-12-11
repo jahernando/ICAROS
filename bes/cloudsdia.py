@@ -23,6 +23,11 @@ def get_krmap_filename(run_number):
     return map_fname
 
 
+def get_maps(map_fname):
+    maps      = cof.read_maps(map_fname)
+    return maps
+
+
 def load_data(runs, sample_label = 'ds'):
     """ load hits and maps data
     """
