@@ -67,12 +67,27 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
     """ City Engine: loops in events, run clouds and makes the summary
     """
 
+    def hits_summary(x, y, z, eraw, erec, q):
+        rmax = np.max(np.sqrt(x * x + y * y))
+        idat = {'eraw'  : np.sum(eraw),
+                'erec'  : np.sum(erec),
+                'q'     : np.sum(q),
+                'nhits' : len(x),
+                'zmin'  : np.min(z),
+                'zmax'  : np.max(z),
+                'dz'    : np.max(z) - np.min(z),
+                'rmax'  : np.max(np.sqrt(x * x + y * y))
+                }
+        return idat
+
+
     corrfac = get_corrfac(maps)
 
     nsize = len(dfhit.groupby('event'))
     print('size', nsize)
 
-    labels  = ['event', 'eraw', 'erec', 'nhits', 'erawHT', 'erecHT', 'nhitsHT']
+    labels  = ['event', 'eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
+               'erawHT', 'erecHT', 'qHT', 'nhitsHT', 'zminHT', 'zmaxHT', 'dzHT', 'rmaxHT']
     labels += ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
                'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
                'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
@@ -90,25 +105,23 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         n += 1
         if (n >= ntotal): continue
 
+        dat['event'][n] = i
+
         # get HT hits info
-        ievent = evt.event
         evtHT = dfhitHT.groupby('event').get_group(i)
-        x, y, z, eraw, erec, times = get_hits(evtHT, ['X', 'Y', 'Z', 'E', 'Ec', 'time'])
-        ##  info from hits
-        dat['erawHT'] [n] = np.sum(eraw)
-        dat['erecHT'] [n] = np.sum(erec)
-        dat['nhitsHT'][n] = len(x)
+        x, y, z, eraw, erec, q, times = get_hits(evtHT, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
+        idat = hits_summary(x, y, z, eraw, erec, q)
+        for key in idat.keys():
+            dat[key + 'HT'] = idat[key]
 
         # get hits info
-        x, y, z, eraw, erec, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'time'])
+        x, y, z, eraw, erec, q, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
+        idat = hits_summary(x, y, z, eraw, erec, q)
+        for key in idat.keys():
+            dat[key] = idat[key]
+
         if (n % 100 == 0):
             print('event : ', i, ', size : ', len(eraw))
-
-        ##  info from hits
-        dat['event'][n] = i
-        dat['eraw'] [n] = np.sum(eraw)
-        dat['erec'] [n] = np.sum(erec)
-        dat['nhits'][n] = len(x)
 
         # clouds
         coors = (x, y, z)
@@ -123,10 +136,7 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         #key = 'evt_outcells'
         #print(key, idat[key], dat[key][n])
 
-    #key = 'evt_outcells'
-    #print('dat ', key, dat[key])
     dfdat = pd.DataFrame(dat)
-    #print('dfdat', key, dfdat[key])
     return dfdat
 
 
