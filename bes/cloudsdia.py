@@ -72,7 +72,7 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
     nsize = len(dfhit.groupby('event'))
     print('size', nsize)
 
-    labels  = ['event', 'eraw', 'erec', 'nhits']
+    labels  = ['event', 'eraw', 'erec', 'nhits', 'erawHT', 'erecHT', 'nhitsHT']
     labels += ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
                'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
                'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
@@ -90,22 +90,32 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         n += 1
         if (n >= ntotal): continue
 
+        # get HT hits info
+        ievent = evt.event
+        print('ievent ', i, ievent)
+        evtHT = dfhitHT.groupby('event').get_group(ievent)
+        x, y, z, eraw, erec, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'time'])
+        ##  info from hits
+        dat['erawHT'] [n] = np.sum(eraw)
+        dat['erecHT'] [n] = np.sum(erec)
+        dat['nhitsHT'][n] = len(x)
+
         # get hits info
         x, y, z, eraw, erec, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'time'])
         if (n % 100 == 0):
             print('event : ', i, ', size : ', len(eraw))
-
-        # clouds
-        coors = (x, y, z)
-        steps = (10., 10., 2.)
-        dfclouds = clouds.clouds(coors, steps, eraw)
-        dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
 
         ##  info from hits
         dat['event'][n] = i
         dat['eraw'] [n] = np.sum(eraw)
         dat['erec'] [n] = np.sum(erec)
         dat['nhits'][n] = len(x)
+
+        # clouds
+        coors = (x, y, z)
+        steps = (10., 10., 2.)
+        dfclouds = clouds.clouds(coors, steps, eraw)
+        dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
 
         ## info from clouds
         idat = cloud_summary(dfclouds)
