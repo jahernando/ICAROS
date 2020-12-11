@@ -93,8 +93,9 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         # get HT hits info
         ievent = evt.event
         print('ievent ', i, ievent)
-        evtHT = dfhitHT.groupby('event').get_group(ievent)
-        x, y, z, eraw, erec, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'time'])
+        evtHT = dfhitHT.groupby('event').get_group(i)
+        x, y, z, eraw, erec, times = get_hits(evtHT, ['X', 'Y', 'Z', 'E', 'Ec', 'time'])
+        print('ievent ', i, ievent, evtHT.event)
         ##  info from hits
         dat['erawHT'] [n] = np.sum(eraw)
         dat['erecHT'] [n] = np.sum(erec)
