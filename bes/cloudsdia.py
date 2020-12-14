@@ -133,6 +133,7 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         dfclouds = clouds.clouds(coors, steps, eraw)
         in_cells = clouds.get_values_in_cells(coors, steps, eraw)
         dfclouds['erec'], _, _ = in_cells(coors, erec)
+        dfclouds['eraw'], _, _ = in_cells(coors, eraw)
         dfclouds['q'], _, _    = in_cells(coors, q)
         dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
 
@@ -308,6 +309,7 @@ def cloud_iso_summary(df):
     cout     = df.cout   .values
     q        = df.q      .values
     erec     = df.erec   .values
+    eraw     = df.eraw   .values
 
 
     # order the tracks by energy
