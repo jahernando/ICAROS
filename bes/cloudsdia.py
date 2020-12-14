@@ -292,3 +292,52 @@ def cloud_calibrate(df, corrfac, itime):
     df['eranger']  = cfac * df['eranger'].values
 
     return df
+
+
+def clouds_iso_summary(df):
+
+    x        = df.x0     .values
+    y        = df.x1     .values
+    z        = df.x2     .values
+    ecells   = df.ene    .values
+    enodes   = df.enode  .values
+    erangs   = df.eranger.values
+    trackid  = df.track  .values
+    rangers  = df.ranger .values
+
+    cout     = df.cout   .values
+    q        = df.q      .values
+    erec     = df.erec   .values
+
+
+    # order the tracks by energy
+    kids, enes = cloud_order_tracks(df)
+
+    # compute isolated tracks
+    nran_trk = np.array([np.sum(trackid == kid) for kid in kids])
+
+    ksel     = nran_trk == 1
+    nisos    = np.sum(ksel)  # number of isolated ranges
+    eisos    = np.sum(enes[ksel]) # energy of the isolated ranges
+
+    #best track
+    kid_track_best = kids[0]
+    dz = np.max(z[trackid == kid_track_best]) - np.min(z[trackid == kid_track_best])
+
+    ksel     = np.array(kids).astype(int)[ksel]
+    #print(ksel)
+
+    idat = {'x' : x[ksel],
+            'y' : y[ksel],
+            'z' : z[ksel],
+            'q' : q[ksel],
+            'erec': erec[ksel],
+            'eraw': eraw[ksel],
+            'out' : cout[ksel],
+            'xb'  : np.ones(nisos) * x[kid_track_best],
+            'yb'  : np.ones(nisos) * y[kid_track_best],
+            'zb'  : np.ones(nisos) * z[kid_track_best],
+            'dz'  : np.ones(nisos) * dz
+           }
+
+    return pd.DataFrame(idat)
