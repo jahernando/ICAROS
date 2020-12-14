@@ -294,7 +294,7 @@ def cloud_calibrate(df, corrfac, itime):
     return df
 
 
-def clouds_iso_summary(df):
+def cloud_iso_summary(df):
 
     x        = df.x0     .values
     y        = df.x1     .values
