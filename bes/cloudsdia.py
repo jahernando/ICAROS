@@ -56,11 +56,13 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
 
     ddhs   = [cloudsdia_(dfh, dfhHT, dmap, ntotal) for dfh, dfhHT, dmap in zip(dfhits, dfhitHTs, dmaps)]
 
-    ddh    = bes.df_concat(ddhs, runs)
+    nruns = len(runs)
+    dfsum    = bes.df_concat([ddhs[0] for i in range(nruns)], runs)
+    dfiso    = bes.df_concat([ddhs[1] for i in range(nruns)], runs)
     #key = 'evt_outcells'
     #print('ddh', ddh[key])
 
-    return ddh
+    return dfsum, dfiso
 
 
 def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
@@ -99,6 +101,8 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
     for label in labels:
         dat[label] = np.zeros(min(nsize, ntotal))
 
+    dfiso = None
+
     n = -1
     for i, evt in dfhit.groupby('event'):
 
@@ -127,6 +131,9 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         coors = (x, y, z)
         steps = (10., 10., 2.)
         dfclouds = clouds.clouds(coors, steps, eraw)
+        in_cells = clouds.get_values_in_cells(coors, steps, eraw)
+        dfclouds['erec'], _, _ = in_cells(coors, erec)
+        dfclouds['q'], _, _    = in_cells(coors, q)
         dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
 
         ## info from clouds
@@ -136,8 +143,13 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         #key = 'evt_outcells'
         #print(key, idat[key], dat[key][n])
 
-    dfdat = pd.DataFrame(dat)
-    return dfdat
+        # summary of isolated clouds
+        idfiso = cloud_iso_summary(dfclouds)
+        idfiso['event'] = i
+        dfiso = idfiso if dfiso is None else pd.concat((dfiso, idfiso), ignore_index = True)
+
+    dfsum = pd.DataFrame(dat)
+    return dfsum, dfiso
 
 
 def cloud_order_tracks(df):
