@@ -383,7 +383,7 @@ def cloudsdia_slice_summary(df):
 
 
     # order the tracks by energy
-    ckids, enes = cloudsdia.cloud_order_tracks(df)
+    ckids, enes = cloud_order_tracks(df)
 
     # compute isolated tracks
     nran_trk = np.array([np.sum(trackid == kid) for kid in ckids])
