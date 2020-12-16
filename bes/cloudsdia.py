@@ -103,7 +103,7 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         dat[label] = np.zeros(min(nsize, ntotal))
 
     dfiso    = None
-    dfslices = None
+    dfslice  = None
 
     n = -1
     for i, evt in dfhit.groupby('event'):
@@ -152,14 +152,14 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         dfiso = idfiso if dfiso is None else pd.concat((dfiso, idfiso), ignore_index = True)
 
         # summary of slices
-        idfslices = cloudsdia_slice_summary(dfclouds)
-        idfslices['event'] = i
-        dfslices = idslices if dfslices is None else pd.concat((dfslices, idfslices), ignore_index = True)
+        idfslice = cloudsdia_slice_summary(dfclouds)
+        idfslice['event'] = i
+        dfslice = idfslice if dfslice is None else pd.concat((dfslice, idfslice), ignore_index = True)
 
 
 
     dfsum = pd.DataFrame(dat)
-    return dfsum, dfiso, dfslices
+    return dfsum, dfiso, dfslice
 
 
 def cloud_order_tracks(df):
