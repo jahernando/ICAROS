@@ -56,12 +56,14 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
 
     ddhs   = [cloudsdia_(dfh, dfhHT, dmap, ntotal) for dfh, dfhHT, dmap in zip(dfhits, dfhitHTs, dmaps)]
 
-    dfsum    = bes.df_concat([ddh[0] for ddh in ddhs], runs)
-    dfiso    = bes.df_concat([ddh[1] for ddh in ddhs], runs)
+    ndfs = len(ddhs[0])
+    dfs = [bes.df_concat([ddh[i] for ddh in ddhs], runs) for i in range(ndfs)]
+    #dfsum    = bes.df_concat([ddh[0] for ddh in ddhs], runs)
+    #dfiso    = bes.df_concat([ddh[1] for ddh in ddhs], runs)
     #key = 'evt_outcells'
     #print('ddh', ddh[key])
 
-    return dfsum, dfiso
+    return dfs
 
 
 def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
@@ -100,7 +102,8 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
     for label in labels:
         dat[label] = np.zeros(min(nsize, ntotal))
 
-    dfiso = None
+    dfiso    = None
+    dfslices = None
 
     n = -1
     for i, evt in dfhit.groupby('event'):
@@ -144,12 +147,19 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         #print(key, idat[key], dat[key][n])
 
         # summary of isolated clouds
-        idfiso = cloud_iso_summary(dfclouds)
+        idfiso = cloudsdia_iso_summary(dfclouds)
         idfiso['event'] = i
         dfiso = idfiso if dfiso is None else pd.concat((dfiso, idfiso), ignore_index = True)
 
+        # summary of slices
+        idfslices = cloudsdia_slice_summary(dfclouds)
+        idfslices['event'] = i
+        dfslices = idslices if dfslices is None else pd.concat((dfslices, idfslices), ignore_index = True)
+
+
+
     dfsum = pd.DataFrame(dat)
-    return dfsum, dfiso
+    return dfsum, dfiso, dfslices
 
 
 def cloud_order_tracks(df):
@@ -294,7 +304,7 @@ def cloud_calibrate(df, corrfac, itime):
     return df
 
 
-def cloud_iso_summary(df):
+def cloudsdia_iso_summary(df):
 
     x        = df.x0     .values
     y        = df.x1     .values
@@ -339,6 +349,79 @@ def cloud_iso_summary(df):
             'yb'  : np.ones(nisos) * y[kid_track_best],
             'zb'  : np.ones(nisos) * z[kid_track_best],
             'dz'  : np.ones(nisos) * dz
+           }
+
+    return pd.DataFrame(idat)
+
+
+def cloudsdia_slice_summary(df):
+
+    z        = df.x2     .values
+    k2       = df.k2     .values
+    kids     = df.kid    .values
+    trackid  = df.track  .values
+
+    ecells   = df.ene    .values
+    enode    = df.enode  .values
+    tnode    = df.tnode  .values
+
+    q        = df.q      .values
+    erec     = df.erec   .values
+    eraw     = df.eraw   .values
+
+    ks      = np.unique(k2)
+    nslices = np.max(ks) + 1
+    kzs     = np.zeros(nslices)
+    zs      = np.zeros(nslices)
+    e0s     = np.zeros(nslices)
+    q0s     = np.zeros(nslices)
+    es      = np.zeros(nslices)
+    nisos   = np.zeros(nslices)
+    eisos   = np.zeros(nslices)
+    nnodes  = np.zeros(nslices)
+    enodes  = np.zeros(nslices)
+
+
+    # order the tracks by energy
+    ckids, enes = cloudsdia.cloud_order_tracks(df)
+
+    # compute isolated tracks
+    nran_trk = np.array([np.sum(trackid == kid) for kid in ckids])
+    ksel     = nran_trk == 1
+    #nisos    = np.sum(ksel)  # number of isolated ranges
+    #eisos    = np.sum(enes[ksel]) # energy of the isolated ranges
+
+    kids_isos   = np.array(ckids).astype(int)[ksel]
+
+    for i, k in enumerate(ks):
+
+        sel      = k2 == k
+        zs[k]    = np.mean(z[sel])
+        e0s[k]   = np.sum(eraw[sel])
+        q0s[k]   = np.sum(q[sel])
+        es[k]    = np.sum(erec[sel])
+
+        # isos
+        ksel     = np.logical_and(sel, np.isin(kids, kids_isos))
+        nisos[k] = np.sum(ksel)
+        eisos[k] = np.sum(ecells[ksel])
+
+        # nodes
+        ksel      = np.logical_and(sel, ~np.isin(kids, kids_isos))
+        ksel      = np.logical_and(ksel, tnode > 0)
+        nnodes[k] = np.sum(ksel)
+        enodes[k] = np.sum(enode[ksel])
+
+
+    idat = {'k'      : kzs,
+            'z'      : zs,
+            'eraw'   : e0s,
+            'q'      : q0s,
+            'erec'   : es,
+            'nisos'  : nisos,
+            'eisos'  : eisos,
+            'nnodes' : nnodes,
+            'enodes' : enodes
            }
 
     return pd.DataFrame(idat)

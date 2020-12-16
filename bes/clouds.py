@@ -219,6 +219,25 @@ def clouds_size(coors, weights = None):
     return ndim, nsize
 
 
+def get_values_in_cells(coors, steps, weights):
+    """ returns a function to locate values in cells
+    """
+
+    ndim         = len(coors)
+    bins         = [arstep(x, step, True) for x, step in zip(coors, steps)]
+    potential, _ = np.histogramdd(coors, bins, weights = weights)
+
+    sel          = potential > 0
+    icells       = to_coors(np.argwhere(sel))
+
+    def in_cells(xcoors, values):
+        hvals, _     = np.histogramdd(xcoors, bins, weights = values)
+        vals         = hvals[icells]
+        return vals
+
+    return in_cells
+
+
 def clouds_potential(coors, steps, weights):
 
     ndim         = len(coors)
@@ -252,7 +271,7 @@ def clouds_neighbours(bins, cells, cells_ene):
     for move in moves:
         coors_next         = [cells[i] + steps[i] * move[i] for i in range(ndim)]
         potential_next, _  = np.histogramdd(coors_next, bins, weights = cells_ene)
-        isel                = potential_next > 0
+        isel               = potential_next > 0
         counts[sel & isel] += 1
 
     nbours = counts[sel].astype(int)
