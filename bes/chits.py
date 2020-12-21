@@ -126,7 +126,7 @@ def hits_summary(ddhits, q0 = 0., corrfac = None):
             'erawmax'  : np.max(eraw),
             'qmax'     : np.max(q),
             'erecmax'  : np.max(erec),
-            'hitsout'  : nout
+            'nhitsout' : nout
             }
     return idat
 
