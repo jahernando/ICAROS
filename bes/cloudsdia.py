@@ -97,7 +97,7 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
 
     def _concat(idata, data, ievent):
         idata['event'] = ievent
-        dat = idata if data is None else pd.concat(data, idata)
+        dat            = idata if data is None else pd.concat((data, idata), ignore_index = True)
         return dat
 
     corrfac = get_corrfac(maps)
@@ -106,8 +106,9 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
     n       = min(nsize, ntotal)
 
     dfsum_hits   = chits.init_hits_summary(n)
-    dfsum_clouds = init_cloud_summary(n)
+    dfsum_slices = None
 
+    dfsum_clouds = init_cloud_summary(n)
 
     n = -1
     for i, evt in dfhit.groupby('event'):
@@ -119,6 +120,9 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
         dfsum_hits = _locate(idat, dfsum_hits, n, i)
         #print(idat)
 
+        idat = chits.slices_summary(evt, q0)
+        dfsum_slices = _concat(idat, dfsum_slices, i)
+
         if (n % 100 == 0):
             print('event : ', i)
 
@@ -127,7 +131,7 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
         idat     = cloud_summary(dfclouds)
         dfsum_clouds = _locate(idat, dfsum_clouds, n, i)
 
-    return [dfsum_hits, dfsum_clouds]
+    return [dfsum_hits, dfsum_slices, dfsum_clouds]
 
 #
 # def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):

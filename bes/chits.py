@@ -130,6 +130,51 @@ def hits_summary(ddhits, q0 = 0., corrfac = None):
             }
     return idat
 
+#---- Slice Summary
+
+
+def init_slices_summary(nsize = 1):
+    labels = ['k', 'z', 'eraw', 'q', 'erec', 'nhits', 'qmin', 'qmax', 'qave', 'qrms',
+              'rave', 'rmax', 'xave', 'yave', 'nhitsout', 'ene']
+    return bes.df_zeros(labels, nsize)
+
+
+def slices_summary(evt, q0 = 0., corrfac = None):
+
+    x, y, z, eraw, erec, q, times = get_filter_hits(evt, q0)
+    nhits = len(x)
+    cout = np.ones(nhits).astype(bool)
+    cfat = np.ones(nhits)
+    if (corrfac is not None):
+        cfac   = corrfac(x, y, z, times)
+        cout   = np.isnan(cfac)
+
+    zs = np.unique(z)
+    nsize = len(zs)
+
+    dat = init_slices_summary(nsize)
+
+    for i, zi in enumerate(zs):
+        dat['k'][i]    = i
+        dat['z'][i]    = zi
+        zsel        = z == zi
+        dat['eraw'][i] = np.sum(eraw[zsel])
+        dat['q'][i]    = np.sum(q[zsel])
+        dat['erec'][i] = np.sum(erec[zsel])
+        dat['nhits'][i] = np.sum(zsel)
+        dat['qmin'][i]  = np.min(q[zsel])
+        dat['qmax'][i]  = np.max(q[zsel])
+        dat['qave'][i]  = np.mean(q[zsel])
+        dat['qrms'][i]  = np.std(q[zsel])
+        dat['xave'][i]  = np.mean(x[zsel])
+        dat['yave'][i]  = np.mean(y[zsel])
+        r  = np.sqrt(x[zsel] * x[zsel] + y[zsel] * y[zsel])
+        dat['rave'][i]  = np.mean(r)
+        dat['rmax'][i]  = np.max(r)
+        dat['nhitsout'][i] = np.sum(cout[zsel])
+        dat['ene'][i]      = np.sum(cfat[zsel] * eraw[zsel])
+
+    return dat
 
 
 #-----------------------------------------------
