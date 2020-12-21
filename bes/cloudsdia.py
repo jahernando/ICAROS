@@ -77,7 +77,6 @@ def get_clouds(evt, corrfac, q0 = 0.):
     dfclouds['eraw'], _, _ = in_cells(coors, eraw)
     dfclouds['q'], _, _    = in_cells(coors, q)
 
-
     # clean nodes
     #newcoors, newenes = clean_nodes(dfclouds)
     #dfclouds = clouds.clouds(newcoors, steps, newenes)
@@ -128,7 +127,7 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
         idat     = cloud_summary(dfclouds)
         dfsum_clouds = _locate(idat, dfsum_clouds, n, i)
 
-    return [dfsum_hits]
+    return [dfsum_hits, dfsum_clouds]
 
 #
 # def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
