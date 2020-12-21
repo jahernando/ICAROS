@@ -104,7 +104,7 @@ def get_corrfac(maps):
 def init_hits_summary(nsize = 1):
     labels =  ['eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
                'erawmax', 'qmax', 'erecmax', 'nhitsout']
-    return chits.df_zeros(labels, nsize)
+    return bes.df_zeros(labels, nsize)
 
 
 def hits_summary(ddhits, q0 = 0., corrfac = None):

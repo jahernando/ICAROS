@@ -8,7 +8,7 @@ from invisible_cities.reco import corrections as cof
 import hipy.utils        as ut
 import bes.bes           as bes
 import bes.chits         as chits
-import clouds        as clouds
+import clouds            as clouds
 
 
 get_chits_filename = chits.get_chits_filename
@@ -180,7 +180,7 @@ def init_cloud_summary(nsize = 1):
               'trk_ncells', 'trk_nnodes', 'trk_nrangs', 'trk_ecells', 'trk_enodes', 'trk_erangs',
               'trk_outcells', 'trk_outnodes', 'trk_outrangs',
               'trk_zmin', 'trk_zmax', 'trk_dz', 'trk_rmax', 'trk_enode1', 'trk_enode2']
-    return chits.df_zeros(labels, nsize)
+    return bes.df_zeros(labels, nsize)
 
 
 def cloud_summary(df):
