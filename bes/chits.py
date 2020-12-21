@@ -108,8 +108,8 @@ def init_hits_summary(nsize = 1):
 
 
 def hits_summary(ddhits, q0 = 0., corrfac = None):
-    x, y, z, eraw, erec, q, times = get_hits(ddhits, q0)
-    nout = 0
+    x, y, z, eraw, erec, q, times = get_filter_hits(ddhits, q0)
+    nout = np.sum(np.isnan(erec))
     if (coorfac):
         cfac   = corrfac(x, y, z, times)
         nout   = np.sum(np.isnan(cfac))
