@@ -106,8 +106,8 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
     nsize   = len(dfhit.groupby('event'))
     n       = min(nsize, ntotal)
 
-    dfsum_hits   = init_hits_summary(n)
-    #dfsum_clouds = init_clouds_summary(n)
+    dfsum_hits   = chits.init_hits_summary(n)
+    dfsum_clouds = init_clouds_summary(n)
 
 
     n = -1
