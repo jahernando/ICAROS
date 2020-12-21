@@ -66,7 +66,7 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000, type_hits = 'LT', q0 = 
 
 def get_clouds(evt, corrfac, q0 = 0.):
 
-    x, y, z, eraw, erec, q, times = chits.get_fiter_hits(evt, q0)
+    x, y, z, eraw, erec, q, times = chits.get_filter_hits(evt, q0)
 
     # clouds
     coors = (x, y, z)
