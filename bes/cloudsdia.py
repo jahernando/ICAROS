@@ -54,7 +54,7 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000, type_hits = 'LT', q0 = 
 
     dfhitsLT, dfhitsHT, dmaps = load_data(runs, sample_label)
 
-    dfhits = dfhitsLT if type_hits = 'LT' else dfhitsHT
+    dfhits = dfhitsLT if type_hits == 'LT' else dfhitsHT
 
     ddhs   = [cloudsdia_(dfh, dmap, ntotal, q0) for dfh, dmap in zip(dfhits, dmaps)]
 
