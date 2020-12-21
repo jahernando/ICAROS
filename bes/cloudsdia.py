@@ -48,13 +48,15 @@ def get_corrfac(maps):
     return corrfac
 
 
-def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
+def cloudsdia(runs, sample_label = 'ds', ntotal = 10000, type_hits = 'LT', q0 = 0.):
     """ a City: read the hits and the maps, runs clouds and recompute energy, returns a DF
     """
 
-    dfhits, dfhitHTs, dmaps = load_data(runs, sample_label)
+    dfhitsLT, dfhitsHT, dmaps = load_data(runs, sample_label)
 
-    ddhs   = [cloudsdia_(dfh, dfhHT, dmap, ntotal) for dfh, dfhHT, dmap in zip(dfhits, dfhitHTs, dmaps)]
+    dfhits = dfhitsLT if type_hits = 'LT' else dfhitsHT
+
+    ddhs   = [cloudsdia_(dfh, dmap, ntotal, q0) for dfh, dmap in zip(dfhits, dmaps)]
 
     ndfs = len(ddhs[0])
     dfs = [bes.df_concat([ddh[i] for ddh in ddhs], runs) for i in range(ndfs)]
@@ -62,44 +64,51 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
     return dfs
 
 
-def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
-    """ City Engine: loops in events, run clouds and makes the summary
-    """
+def get_clouds(evt, corrfac, q0 = 0.):
 
-    def hits_summary(x, y, z, eraw, erec, q):
-        rmax = np.max(np.sqrt(x * x + y * y))
-        idat = {'eraw'  : np.sum(eraw),
-                'erec'  : np.sum(erec),
-                'q'     : np.sum(q),
-                'nhits' : len(x),
-                'zmin'  : np.min(z),
-                'zmax'  : np.max(z),
-                'dz'    : np.max(z) - np.min(z),
-                'rmax'  : np.max(np.sqrt(x * x + y * y))
-                }
-        return idat
+    x, y, z, eraw, erec, q, times = get_hits(evt, q0)
 
+    # clouds
+    coors = (x, y, z)
+    steps = (10., 10., 2.)
+    dfclouds = clouds.clouds(coors, steps, eraw)
+    in_cells = clouds.get_values_in_cells(coors, steps, eraw)
+    dfclouds['erec'], _, _ = in_cells(coors, erec)
+    dfclouds['eraw'], _, _ = in_cells(coors, eraw)
+    dfclouds['q'], _, _    = in_cells(coors, q)
+
+
+    # clean nodes
+    #newcoors, newenes = clean_nodes(dfclouds)
+    #dfclouds = clouds.clouds(newcoors, steps, newenes)
+
+    # calibrate
+    dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
+
+    return dfclouds
+
+
+def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
+
+    def _locate(idata, data, i, ievent):
+        data['event'][i] = ievent
+        for label in idata.keys():
+            data[label][i] = idata[label]
+        return data
+
+    def _concat(idata, data, ievent):
+        idata['event'] = ievent
+        dat = idata if data is None else pd.concat(data, idata)
+        return dat
 
     corrfac = get_corrfac(maps)
 
-    nsize = len(dfhit.groupby('event'))
-    print('size', nsize)
+    nsize   = len(dfhit.groupby('event'))
+    n       = min(nsize, ntotal)
 
-    labels  = ['event', 'eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
-               'erawHT', 'erecHT', 'qHT', 'nhitsHT', 'zminHT', 'zmaxHT', 'dzHT', 'rmaxHT']
-    labels += ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
-               'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
-               'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
-               'trk_ncells', 'trk_nnodes', 'trk_nrangs', 'trk_ecells', 'trk_enodes', 'trk_erangs',
-               'trk_outcells', 'trk_outnodes', 'trk_outrangs',
-               'trk_zmin', 'trk_zmax', 'trk_dz', 'trk_rmax', 'trk_enode1', 'trk_enode2']
+    dfsum_hits   = init_hits_summary(n)
+    #dfsum_clouds = init_clouds_summary(n)
 
-    dat = {}
-    for label in labels:
-        dat[label] = np.zeros(min(nsize, ntotal))
-
-    dfiso    = None
-    dfslice  = None
 
     n = -1
     for i, evt in dfhit.groupby('event'):
@@ -107,56 +116,116 @@ def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
         n += 1
         if (n >= ntotal): continue
 
-        dat['event'][n] = i
-
-        # get HT hits info
-        evtHT = dfhitHT.groupby('event').get_group(i)
-        x, y, z, eraw, erec, q, times = get_hits(evtHT, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
-        idat = hits_summary(x, y, z, eraw, erec, q)
-        for key in idat.keys():
-            dat[key + 'HT'][n] = idat[key]
-
-        # get hits info
-        x, y, z, eraw, erec, q, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
-        idat = hits_summary(x, y, z, eraw, erec, q)
-        for key in idat.keys():
-            dat[key][n] = idat[key]
+        idat = hits_summary(evt, q0)
+        dfsum_hits = _locate(idat, dfsum_hits, n, i)
+        #print(idat)
 
         if (n % 100 == 0):
-            print('event : ', i, ', size : ', len(eraw))
+            print('event : ', i)
 
         # clouds
-        coors = (x, y, z)
-        steps = (10., 10., 2.)
-        dfclouds = clouds.clouds(coors, steps, eraw)
-        in_cells = clouds.get_values_in_cells(coors, steps, eraw)
-        dfclouds['erec'], _, _ = in_cells(coors, erec)
-        dfclouds['eraw'], _, _ = in_cells(coors, eraw)
-        dfclouds['q'], _, _    = in_cells(coors, q)
-        dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
+        dfclouds = get_clouds(evt, corrfac, q0)
+        idat     = cloud_summary(dfclouds)
+        dfsum_clouds = _locate(idat, dfsum_clouds, n, i)
 
-        ## info from clouds
-        idat = cloud_summary(dfclouds)
-        for key in idat.keys():
-            dat[key][n] = idat[key]
-        #key = 'evt_outcells'
-        #print(key, idat[key], dat[key][n])
+    return [dfsum_hits]
 
-        # summary of isolated clouds
-        idfiso = cloudsdia_iso_summary(dfclouds)
-        idfiso['event'] = i
-        dfiso = idfiso if dfiso is None else pd.concat((dfiso, idfiso), ignore_index = True)
-
-        # summary of slices
-        idfslice = cloudsdia_slice_summary(dfclouds)
-        idfslice['event'] = i
-        dfslice = idfslice if dfslice is None else pd.concat((dfslice, idfslice), ignore_index = True)
-
-
-
-    dfsum = pd.DataFrame(dat)
-    return dfsum, dfiso, dfslice
-
+#
+# def cloudsdia_(dfhit, dfhitHT, maps, ntotal = 100000):
+#     """ City Engine: loops in events, run clouds and makes the summary
+#     """
+#
+#     def hits_summary(x, y, z, eraw, erec, q):
+#         rmax = np.max(np.sqrt(x * x + y * y))
+#         idat = {'eraw'  : np.sum(eraw),
+#                 'erec'  : np.sum(erec),
+#                 'q'     : np.sum(q),
+#                 'nhits' : len(x),
+#                 'zmin'  : np.min(z),
+#                 'zmax'  : np.max(z),
+#                 'dz'    : np.max(z) - np.min(z),
+#                 'rmax'  : np.max(np.sqrt(x * x + y * y))
+#                 }
+#         return idat
+#
+#
+#     corrfac = get_corrfac(maps)
+#
+#     nsize = len(dfhit.groupby('event'))
+#     print('size', nsize)
+#
+#     labels  = ['event', 'eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
+#                'erawHT', 'erecHT', 'qHT', 'nhitsHT', 'zminHT', 'zmaxHT', 'dzHT', 'rmaxHT']
+#     labels += ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
+#                'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
+#                'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
+#                'trk_ncells', 'trk_nnodes', 'trk_nrangs', 'trk_ecells', 'trk_enodes', 'trk_erangs',
+#                'trk_outcells', 'trk_outnodes', 'trk_outrangs',
+#                'trk_zmin', 'trk_zmax', 'trk_dz', 'trk_rmax', 'trk_enode1', 'trk_enode2']
+#
+#     dat = {}
+#     for label in labels:
+#         dat[label] = np.zeros(min(nsize, ntotal))
+#
+#     dfiso    = None
+#     dfslice  = None
+#
+#     n = -1
+#     for i, evt in dfhit.groupby('event'):
+#
+#         n += 1
+#         if (n >= ntotal): continue
+#
+#         dat['event'][n] = i
+#
+#         # get HT hits info
+#         evtHT = dfhitHT.groupby('event').get_group(i)
+#         x, y, z, eraw, erec, q, times = get_hits(evtHT, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
+#         idat = hits_summary(x, y, z, eraw, erec, q)
+#         for key in idat.keys():
+#             dat[key + 'HT'][n] = idat[key]
+#
+#         # get hits info
+#         x, y, z, eraw, erec, q, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
+#         idat = hits_summary(x, y, z, eraw, erec, q)
+#         for key in idat.keys():
+#             dat[key][n] = idat[key]
+#
+#         if (n % 100 == 0):
+#             print('event : ', i, ', size : ', len(eraw))
+#
+#         # clouds
+#         coors = (x, y, z)
+#         steps = (10., 10., 2.)
+#         dfclouds = clouds.clouds(coors, steps, eraw)
+#         in_cells = clouds.get_values_in_cells(coors, steps, eraw)
+#         dfclouds['erec'], _, _ = in_cells(coors, erec)
+#         dfclouds['eraw'], _, _ = in_cells(coors, eraw)
+#         dfclouds['q'], _, _    = in_cells(coors, q)
+#         dfclouds = cloud_calibrate(dfclouds, corrfac, times[0])
+#
+#         ## info from clouds
+#         idat = cloud_summary(dfclouds)
+#         for key in idat.keys():
+#             dat[key][n] = idat[key]
+#         #key = 'evt_outcells'
+#         #print(key, idat[key], dat[key][n])
+#
+#         # summary of isolated clouds
+#         idfiso = cloudsdia_iso_summary(dfclouds)
+#         idfiso['event'] = i
+#         dfiso = idfiso if dfiso is None else pd.concat((dfiso, idfiso), ignore_index = True)
+#
+#         # summary of slices
+#         idfslice = cloudsdia_slice_summary(dfclouds)
+#         idfslice['event'] = i
+#         dfslice = idfslice if dfslice is None else pd.concat((dfslice, idfslice), ignore_index = True)
+#
+#
+#
+#     dfsum = pd.DataFrame(dat)
+#     return dfsum, dfiso, dfslice
+#
 
 def cloud_order_tracks(df):
     """ returns the ids of the tracks ordered by energy
