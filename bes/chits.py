@@ -104,17 +104,7 @@ def get_corrfac(maps):
 def init_hits_summary(nsize = 1):
     labels =  ['eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
                'erawmax', 'qmax', 'erecmax', 'nhitsout']
-    return df_zeros(labels, nsize)
-
-
-def init_clouds_summary(nsize = 1):
-    labels = ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
-              'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
-              'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
-              'trk_ncells', 'trk_nnodes', 'trk_nrangs', 'trk_ecells', 'trk_enodes', 'trk_erangs',
-              'trk_outcells', 'trk_outnodes', 'trk_outrangs',
-              'trk_zmin', 'trk_zmax', 'trk_dz', 'trk_rmax', 'trk_enode1', 'trk_enode2']
-    return df_zeros(labels, nsize)
+    return chits.df_zeros(labels, nsize)
 
 
 def hits_summary(ddhits, q0 = 0., corrfac = None):

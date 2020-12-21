@@ -58,10 +58,6 @@ def cloudsdia(runs, sample_label = 'ds', ntotal = 10000):
 
     ndfs = len(ddhs[0])
     dfs = [bes.df_concat([ddh[i] for ddh in ddhs], runs) for i in range(ndfs)]
-    #dfsum    = bes.df_concat([ddh[0] for ddh in ddhs], runs)
-    #dfiso    = bes.df_concat([ddh[1] for ddh in ddhs], runs)
-    #key = 'evt_outcells'
-    #print('ddh', ddh[key])
 
     return dfs
 
@@ -176,6 +172,15 @@ def cloud_order_tracks(df):
     kids, enes = clouds.sorted_by_energy(kids, enes)
     enes     = np.array(enes)
     return kids, enes
+
+def init_cloud_summary(nsize = 1):
+    labels = ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
+              'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
+              'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
+              'trk_ncells', 'trk_nnodes', 'trk_nrangs', 'trk_ecells', 'trk_enodes', 'trk_erangs',
+              'trk_outcells', 'trk_outnodes', 'trk_outrangs',
+              'trk_zmin', 'trk_zmax', 'trk_dz', 'trk_rmax', 'trk_enode1', 'trk_enode2']
+    return chits.df_zeros(labels, nsize)
 
 
 def cloud_summary(df):
@@ -396,6 +401,7 @@ def cloudsdia_slice_summary(df):
     for i, k in enumerate(ks):
 
         sel      = k2 == k
+        kzs[k]   = k
         zs[k]    = np.mean(z[sel])
         e0s[k]   = np.sum(eraw[sel])
         q0s[k]   = np.sum(q[sel])
