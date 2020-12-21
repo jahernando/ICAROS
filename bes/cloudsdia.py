@@ -116,7 +116,7 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
         n += 1
         if (n >= ntotal): continue
 
-        idat = hits_summary(evt, q0)
+        idat = chits.hits_summary(evt, q0)
         dfsum_hits = _locate(idat, dfsum_hits, n, i)
         #print(idat)
 
