@@ -23,19 +23,6 @@ def get_krmap_filename(run_number):
     return map_fname
 
 
-def get_hitsrevisited_df(runs, sample_label = 'ds', hit_type = 'CHITs.highTh', alpha = alpha):
-
-    fnames = [get_chits_filename(run, sample_label + '_rough') for run in runs]
-    dfhs   = [pd.read_hdf(fname, hit_type) for fname in fnames]
-
-    fnames = [get_krmap_filename(run) for run in runs]
-    maps   = [get_maps(fname) for fname in fnames]
-
-    ddhs   = [dfh_corrections(dfh, imap, alpha) for dfh, imap in zip(dfhs, maps)]
-
-    ddh    = bes.df_concat(ddhs, runs)
-
-    return ddh
 
 ##------
 
@@ -55,6 +42,110 @@ def get_hits(hh, labels = ('X', 'Y', 'Z', 'DT', 'Ec', 'E', 'time'), vdrift = Non
 def get_maps(map_fname):
     maps      = cof.read_maps(map_fname)
     return maps
+
+
+def in_axis(val, axis):
+    nsize = len(val)
+    valin = np.zeros(nsize)
+    valin = [np.sum(val[axis == k]) for k in axis]
+    return np.array(valin)
+
+
+def share_ene(ene, q, z, sel):
+
+    etot = np.sum(ene)
+    e0s = in_axis(ene, z)
+    q0s = in_axis(q  , z)
+
+    qnew         = np.copy(q)
+    qnew[~sel]   = 0.
+    q0s          = in_axis(qnew, z)
+    sel0         = q0s > 0
+    qnew[sel0]   = qnew[sel0]/q0s[sel0]
+    enew         = e0s * qnew
+    etotnew      = np.sum(enew)
+    enew         = enew * etot / etotnew
+
+    return enew, qnew * q0s
+
+
+def get_filter_hits(evt, q0):
+    """ returns the x, y, z, eraw, erec, q, time of this hits above q > q0
+    (notice that total initil eraw is shared between the filtered hits)
+    """
+
+    labels = ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time']
+
+    x, y, z, eraw, erec, q, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
+
+    sel = q > q0
+    if (np.sum(sel) > 0):
+        eraw, q = share_ene(eraw, q, z, sel)
+        x, y, z, eraw, erec, q, times = x[sel], y[sel], z[sel], eraw[sel], erec[sel], q[sel], times[sel]
+
+    return x, y, z, eraw, erec, q, times
+
+
+def get_corrfac(maps):
+    """ Return correction faction as variables (x, y, z) using the map
+    """
+
+    vdrift    = np.mean(maps.t_evol.dv)
+    print('drift velocity ', vdrift)
+    _corrfac  = cof.apply_all_correction(maps, apply_temp = True,
+                                         norm_strat = cof.norm_strategy.kr)
+    def corrfac(x, y, z, times):
+        dt = z/vdrift
+        return _corrfac(x, y, dt, times)
+
+    return corrfac
+
+
+def init_hits_summary(nsize = 1):
+    labels =  ['eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
+               'erawmax', 'qmax', 'erecmax', 'nhitsout']
+    return df_zeros(labels, nsize)
+
+
+def init_clouds_summary(nsize = 1):
+    labels = ['evt_ntracks', 'evt_nisos', 'evt_eisos', 'evt_ncells', 'evt_nnodes', 'evt_nrangs',
+              'evt_ecells', 'evt_enodes', 'evt_erangs', 'evt_outcells', 'evt_outnodes', 'evt_outrangs',
+              'evt_zmin', 'evt_zmax', 'evt_dz', 'evt_rmax', 'evt_enode1', 'evt_enode2',
+              'trk_ncells', 'trk_nnodes', 'trk_nrangs', 'trk_ecells', 'trk_enodes', 'trk_erangs',
+              'trk_outcells', 'trk_outnodes', 'trk_outrangs',
+              'trk_zmin', 'trk_zmax', 'trk_dz', 'trk_rmax', 'trk_enode1', 'trk_enode2']
+    return df_zeros(labels, nsize)
+
+
+def hits_summary(ddhits, q0 = 0., corrfac = None):
+    x, y, z, eraw, erec, q, times = get_hits(ddhits, q0)
+    nout = 0
+    if (coorfac):
+        cfac   = corrfac(x, y, z, times)
+        nout   = np.sum(np.isnan(cfac))
+
+    rmax = np.max(np.sqrt(x * x + y * y))
+    idat = {'eraw'  : np.sum(eraw),
+            'erec'  : np.sum(erec),
+            'q'     : np.sum(q),
+            'nhits' : len(x),
+            'zmin'  : np.min(z),
+            'zmax'  : np.max(z),
+            'dz'    : np.max(z) - np.min(z),
+            'rmax'  : np.max(np.sqrt(x * x + y * y)),
+            'erawmax'  : np.max(eraw),
+            'qmax'     : np.max(q),
+            'erecmax'  : np.max(erec),
+            'hitsout'  : nout
+            }
+    return idat
+
+
+
+#-----------------------------------------------
+# Study of the corrections - City
+#-----------------------------------------------
+
 
 
 def dfh_corrections(dfh, maps, alpha = alpha):
@@ -158,3 +249,18 @@ def dfh_corrections(dfh, maps, alpha = alpha):
     ddc = pd.DataFrame(ddc, index = ddmin.index)
 
     return ddc
+
+
+def get_hitsrevisited_df(runs, sample_label = 'ds', hit_type = 'CHITs.highTh', alpha = alpha):
+
+    fnames = [get_chits_filename(run, sample_label + '_rough') for run in runs]
+    dfhs   = [pd.read_hdf(fname, hit_type) for fname in fnames]
+
+    fnames = [get_krmap_filename(run) for run in runs]
+    maps   = [get_maps(fname) for fname in fnames]
+
+    ddhs   = [dfh_corrections(dfh, imap, alpha) for dfh, imap in zip(dfhs, maps)]
+
+    ddh    = bes.df_concat(ddhs, runs)
+
+    return ddh
