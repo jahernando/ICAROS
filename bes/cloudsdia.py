@@ -48,6 +48,7 @@ def get_corrfac(maps):
     return corrfac
 
 
+
 def cloudsdia(runs, sample_label = 'ds', ntotal = 10000, type_hits = 'LT', q0 = 0.):
     """ a City: read the hits and the maps, runs clouds and recompute energy, returns a DF
     """
@@ -120,7 +121,7 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
         dfsum_hits = _locate(idat, dfsum_hits, n, i)
         #print(idat)
 
-        idat = chits.slices_summary(evt, q0)
+        idat = chits.slices_summary(evt, max(q0, 3.))
         dfsum_slices = _concat(idat, dfsum_slices, i)
 
         if (n % 100 == 0):
