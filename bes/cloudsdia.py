@@ -121,14 +121,16 @@ def cloudsdia_(dfhit, maps, ntotal = 10000, q0 = 0.):
         dfsum_hits = _locate(idat, dfsum_hits, n, i)
         #print(idat)
 
-        idat = chits.slices_summary(evt, max(q0, 3.))
+        idat = chits.slices_summary(evt, q0)
         dfsum_slices = _concat(idat, dfsum_slices, i)
 
         if (n % 100 == 0):
             print('event : ', i)
 
         # clouds
-        dfclouds = get_clouds(evt, corrfac, q0)
+        if (n == 1 and q0 < 3.):
+            print('info: Clouds will run with q = 3')
+        dfclouds = get_clouds(evt, corrfac, max(q0, 3))
         idat     = cloud_summary(dfclouds)
         dfsum_clouds = _locate(idat, dfsum_clouds, n, i)
 
