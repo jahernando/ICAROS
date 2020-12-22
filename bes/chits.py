@@ -4,12 +4,20 @@ import tables            as tb
 import matplotlib.pyplot as plt
 import bes.bes           as bes
 
-from invisible_cities.reco import corrections as cof
+from invisible_cities.io.dst_io  import load_dst
+from invisible_cities.reco       import corrections as cof
 
 
 #----- utility functions to get the DF
 
 alpha = 2.76e-4
+
+def get_df_penthesilea_hits(run_number, ifile):
+    datadir = '/home/hernando/data/NEW/'
+    fnames  = datadir + 'penthesilea_' + str(ifile) + '_' + str(run_number) + 'ds.h5'
+    chits = load_dst(fname, "RECO", "Events")
+    return chits
+
 
 def get_chits_filename(run_number, label = 'ds_rough'):
     datadir    = f"/home/hernando/data/NEW"
@@ -103,12 +111,14 @@ def get_corrfac(maps):
 
 def init_hits_summary(nsize = 1):
     labels =  ['eraw', 'erec', 'q', 'nhits', 'zmin', 'zmax', 'dz', 'rmax',
-               'erawmax', 'qmax', 'erecmax', 'nhitsout']
+               'erawmax', 'qmax', 'erecmax', 'nhitsout', 'ene']
     return bes.df_zeros(labels, nsize)
 
 
 def hits_summary(ddhits, q0 = 0., corrfac = None):
     x, y, z, eraw, erec, q, times = get_filter_hits(ddhits, q0)
+
+    cfac = np.ones(len(x))
     nout = np.sum(np.isnan(erec))
     if (corrfac is not None):
         cfac   = corrfac(x, y, z, times)
@@ -126,7 +136,8 @@ def hits_summary(ddhits, q0 = 0., corrfac = None):
             'erawmax'  : np.max(eraw),
             'qmax'     : np.max(q),
             'erecmax'  : np.max(erec),
-            'nhitsout' : nout
+            'nhitsout' : nout,
+            'ene'      : np.sum(cfac * eraw)
             }
     return idat
 
@@ -144,7 +155,7 @@ def slices_summary(evt, q0 = 0., corrfac = None):
     x, y, z, eraw, erec, q, times = get_filter_hits(evt, q0)
     nhits = len(x)
     cout = np.ones(nhits).astype(bool)
-    cfat = np.ones(nhits)
+    cfac = np.ones(nhits)
     if (corrfac is not None):
         cfac   = corrfac(x, y, z, times)
         cout   = np.isnan(cfac)
@@ -172,7 +183,7 @@ def slices_summary(evt, q0 = 0., corrfac = None):
         dat['rave'][i]  = np.mean(r)
         dat['rmax'][i]  = np.max(r)
         dat['nhitsout'][i] = np.sum(cout[zsel])
-        dat['ene'][i]      = np.sum(cfat[zsel] * eraw[zsel])
+        dat['ene'][i]      = np.sum(cfac[zsel] * eraw[zsel])
 
     return dat
 
