@@ -52,18 +52,26 @@ def get_maps(map_fname):
     return maps
 
 
-def in_axis(val, axis):
+def in_axis(val, axis, fun = np.sum):
     nsize = len(val)
     valin = np.zeros(nsize)
-    valin = [np.sum(val[axis == k]) for k in axis]
+    valin = [fun(val[axis == k]) for k in axis]
     return np.array(valin)
 
 
-def share_ene(ene, q, z, sel):
+def share_ene(ene, q, z, q0 = 0.):
+    """ share the energy amont the hits that pass the q > q0.
+    Always the hit(s) with the maximum charge in the slice, will pass, even if its charge is smaller than q0.
+    With that there is no re-share of energy between conected slices
+    """
 
     etot = np.sum(ene)
-    e0s = in_axis(ene, z)
-    q0s = in_axis(q  , z)
+    e0s  = in_axis(ene, z)
+    q0s  = in_axis(q  , z)
+    qths = in_axis(q, z, np.max)
+
+    sel  = np.logical_or((q > q0), (q >= qths))
+    print('number of hits ', np.sum(sel))
 
     qnew         = np.copy(q)
     qnew[~sel]   = 0.
@@ -72,9 +80,10 @@ def share_ene(ene, q, z, sel):
     qnew[sel0]   = qnew[sel0]/q0s[sel0]
     enew         = e0s * qnew
     etotnew      = np.sum(enew)
+    print('factor ', etot/etotnew)
     enew         = enew * etot / etotnew
 
-    return enew, qnew * q0s
+    return enew, qnew * q0s, sel
 
 
 def get_filter_hits(evt, q0):
@@ -86,9 +95,8 @@ def get_filter_hits(evt, q0):
 
     x, y, z, eraw, erec, q, times = get_hits(evt, ['X', 'Y', 'Z', 'E', 'Ec', 'Q', 'time'])
 
-    sel = q > q0
-    if (np.sum(sel) > 0):
-        eraw, q = share_ene(eraw, q, z, sel)
+    if (np.sum(q > q0) < len(q)):
+        eraw, q, sel   = share_ene(eraw, q, z, q0)
         x, y, z, eraw, erec, q, times = x[sel], y[sel], z[sel], eraw[sel], erec[sel], q[sel], times[sel]
 
     return x, y, z, eraw, erec, q, times
@@ -124,9 +132,16 @@ def hits_summary(ddhits, q0 = 0., corrfac = None):
         cfac   = corrfac(x, y, z, times)
         nout   = np.sum(np.isnan(cfac))
 
+    # remove the out-of-map hits, be careful with the total E0 light! (share!)
+    etot = np.sum(eraw)
+    eout = np.sum(eraw[np.isnan(cfac)])
+    factor = 1. if etot - eout <= 0. else etot/(etot - eout)
+    ene  = np.nan_to_num(cfac * eraw) * factor
+
+
     rmax = np.max(np.sqrt(x * x + y * y))
     idat = {'eraw'  : np.sum(eraw),
-            'erec'  : np.sum(erec),
+            'erec'  : np.sum(np.nan_to_num(erec)),
             'q'     : np.sum(q),
             'nhits' : len(x),
             'zmin'  : np.min(z),
@@ -137,7 +152,7 @@ def hits_summary(ddhits, q0 = 0., corrfac = None):
             'qmax'     : np.max(q),
             'erecmax'  : np.max(erec),
             'nhitsout' : nout,
-            'ene'      : np.sum(cfac * eraw)
+            'ene'      : np.sum(ene)
             }
     return idat
 
