@@ -71,8 +71,7 @@ def share_ene(ene, q, z, q0 = 0.):
     qths = in_axis(q, z, np.max)
 
     sel  = np.logical_or((q > q0), (q >= qths))
-    print('number of hits ', np.sum(sel))
-
+    
     qnew         = np.copy(q)
     qnew[~sel]   = 0.
     q0s          = in_axis(qnew, z)
@@ -80,9 +79,6 @@ def share_ene(ene, q, z, q0 = 0.):
     qnew[sel0]   = qnew[sel0]/q0s[sel0]
     enew         = e0s * qnew
     etotnew      = np.sum(enew)
-    print('factor ', etot/etotnew)
-    enew         = enew * etot / etotnew
-
     return enew, qnew * q0s, sel
 
 
